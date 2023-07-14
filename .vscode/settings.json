@@ -1,0 +1,14 @@
+{
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "editor.mouseWheelZoom": true,
+  "files.eol": "\n",
+  "files.exclude": {
+    ".vscode": false,
+    "*.lock": false,
+    "LICENSE": false,
+    "pnpm-lock.yaml": false
+  }
+}

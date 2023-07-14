@@ -1,0 +1,53 @@
+{
+  "name": "react-base",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack serve --mode=development",
+    "build": "webpack --mode=production",
+    "lint": "pnpm prettier && pnpm eslint && pnpm check",
+    "prettier": "prettier --ignore-path .eslintignore **/*.{js,jsx,ts,tsx} --write",
+    "eslint": "eslint **/*.{js,jsx,ts,tsx} --fix",
+    "check": "tsc --noEmit -p tsconfig.json",
+    "preinstall": "npx only-allow pnpm",
+    "postinstall": "simple-git-hooks"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.4.2",
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.44.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-simple-import-sort": "^10.0.0",
+    "html-webpack-plugin": "^5.5.3",
+    "lint-staged": "^13.2.3",
+    "prettier": "^3.0.0",
+    "simple-git-hooks": "^2.8.1",
+    "ts-loader": "^9.4.4",
+    "typescript": "^5.1.0",
+    "webpack": "^5.88.1",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "prettier --ignore-path .eslintignore --write",
+      "eslint --fix"
+    ]
+  },
+  "simple-git-hooks": {
+    "pre-commit": "npx lint-staged && pnpm check"
+  }
+}
