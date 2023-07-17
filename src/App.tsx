@@ -1,14 +1,21 @@
-import { useState } from "react";
+import { Component } from "react";
 
-export default function App() {
-  const [data, setData] = useState("hello world");
-  const inputHandler = (e: React.FormEvent) => {
-    setData((e.target as HTMLInputElement).value);
+export default class App extends Component {
+  state = {
+    value: "Taylor",
   };
-  return (
-    <>
-      <div>{data}</div>
-      <input type="text" onInput={inputHandler} />
-    </>
-  );
+  inputHandler = (e: React.FormEvent) => {
+    this.setState({
+      value: (e.target as HTMLInputElement).value,
+    });
+  };
+  render() {
+    return (
+      <>
+        <div>hello world</div>
+        <input type="text" onInput={this.inputHandler} />
+        <div>input value: {this.state.value}</div>
+      </>
+    );
+  }
 }

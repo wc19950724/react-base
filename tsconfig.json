@@ -1,12 +1,22 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "baseUrl": ".",
+    "target": "esnext",
     "module": "esnext",
     "jsx": "react-jsx",
     "strict": true,
     "esModuleInterop": true,
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "paths": {
+      "@/*": ["src/*"],
+      "~/*": ["*"]
+    },
+  },
+  "ts-node": {
+    "compilerOptions": {
+      "module": "CommonJS",
+    }
   }
 }
