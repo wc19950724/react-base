@@ -32,7 +32,12 @@ export default class ErrorBoundary extends Component<IProps, IState> {
     //   in App
     console.log(error, info.componentStack);
     this.setState({
-      errorText: <p>{String(error)}</p>,
+      errorText: (
+        <>
+          <p>{String(error)}</p>
+          <p>{info.componentStack}</p>
+        </>
+      ),
     });
   };
 

@@ -45,6 +45,10 @@ export default (
           exclude: /node_modules/,
           use: "ts-loader",
         },
+        {
+          test: /\.(css|less)$/i,
+          use: ["style-loader", "css-loader", "less-loader"],
+        },
       ],
     },
     plugins: [

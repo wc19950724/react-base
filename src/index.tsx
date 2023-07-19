@@ -1,3 +1,6 @@
+import "@/styles/index.less";
+
+import { ConfigProvider } from "antd";
 import React from "react";
 import { createRoot } from "react-dom/client";
 
@@ -9,9 +12,11 @@ const root = createRoot(document.getElementById("root") || document.body);
 
 root.render(
   <React.StrictMode>
-    <ErrorBoundary>
-      <App />
-    </ErrorBoundary>
+    <ConfigProvider>
+      <ErrorBoundary>
+        <App />
+      </ErrorBoundary>
+    </ConfigProvider>
   </React.StrictMode>,
 );
 versionShow();
