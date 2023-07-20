@@ -1,6 +1,8 @@
 import { execSync } from "child_process";
+import CssMinimizerPlugin from "css-minimizer-webpack-plugin";
 import fs from "fs";
 import HtmlWebpackPlugin from "html-webpack-plugin";
+import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import path from "path";
 import { Configuration, EnvironmentPlugin } from "webpack";
 import { Configuration as DevConfiguration } from "webpack-dev-server";
@@ -38,6 +40,17 @@ export default (
       assetModuleFilename: "[ext]/[name].[contenthash].[ext]",
       path: path.resolve(__dirname, "dist"),
     },
+    performance: {
+      hints: mode === "production" && "warning",
+      maxEntrypointSize: 1024 * 1024, // 1 MiB
+      maxAssetSize: 512 * 1024, // 512 KiB
+    },
+    optimization: {
+      splitChunks: {
+        chunks: "all",
+      },
+      minimizer: ["...", mode === "production" && new CssMinimizerPlugin()],
+    },
     module: {
       rules: [
         {
@@ -47,7 +60,13 @@ export default (
         },
         {
           test: /\.(css|less)$/i,
-          use: ["style-loader", "css-loader", "less-loader"],
+          use: [
+            mode === "production"
+              ? MiniCssExtractPlugin.loader
+              : "style-loader",
+            "css-loader",
+            "less-loader",
+          ],
         },
       ],
     },
@@ -60,6 +79,11 @@ export default (
         __PKGNAME__: process.env.npm_package_name,
         __PKGVERSION__: process.env.npm_package_version,
       }),
+      mode === "production" &&
+        new MiniCssExtractPlugin({
+          filename: "css/[name].[contenthash].css",
+          chunkFilename: "css/[name].[contenthash].css",
+        }),
     ],
     devServer: {
       open: true,

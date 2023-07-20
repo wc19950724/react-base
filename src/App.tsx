@@ -5,7 +5,7 @@ import {
   TeamOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import { Image, Layout, Menu, MenuProps } from "antd";
+import { Image, Layout, Menu, MenuProps, theme } from "antd";
 import { useState } from "react";
 import { FC } from "react";
 
@@ -42,6 +42,9 @@ const items: MenuItem[] = [
 
 const App: FC = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const {
+    token: { colorBgContainer },
+  } = theme.useToken();
 
   return (
     <Layout hasSider className="h-full">
@@ -69,9 +72,12 @@ const App: FC = () => {
         />
       </Layout.Sider>
       <Layout>
-        <Layout.Header>Header</Layout.Header>
-        <Layout.Content>Content</Layout.Content>
-        <Layout.Footer>Footer</Layout.Footer>
+        <Layout.Header
+          style={{ padding: 0, backgroundColor: colorBgContainer }}
+        >
+          Header
+        </Layout.Header>
+        <Layout.Content className="overflow-auto">Content</Layout.Content>
       </Layout>
     </Layout>
   );
