@@ -5,7 +5,5 @@
     "eamodio.gitlens",
     "dbaeumer.vscode-eslint"
   ],
-  "unwantedRecommendations": [
-    "esbenp.prettier-vscode",
-  ]
+  "unwantedRecommendations": ["esbenp.prettier-vscode"]
 }

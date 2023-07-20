@@ -7,8 +7,8 @@
     "preview": "webpack serve --mode=production",
     "build": "webpack --mode=production",
     "lint": "pnpm prettier && pnpm eslint && pnpm check",
-    "prettier": "prettier --ignore-path .eslintignore **/*.{js,jsx,ts,tsx} --write",
-    "eslint": "eslint **/*.{js,jsx,ts,tsx} --fix",
+    "prettier": "prettier --ignore-path .eslintignore . --write",
+    "eslint": "eslint . --fix",
     "check": "tsc --noEmit -p tsconfig.json",
     "preinstall": "npx only-allow pnpm",
     "postinstall": "simple-git-hooks"
