@@ -1,18 +1,22 @@
+import { Button, Space } from "antd";
 import { fabric } from "fabric";
 import { useEffect } from "react";
 
+import useDrawCsv from "@/hooks/useDrawCsv";
+
 const Canvas = () => {
+  let canvas: fabric.Canvas | null;
   useEffect(() => {
-    const canvas = new fabric.Canvas("canvas");
-    canvas.setWidth(512);
-    canvas.setHeight(512);
-    canvas.backgroundColor = "#333";
+    canvas = new fabric.Canvas("canvas");
+    canvas.setWidth(50);
+    canvas.setHeight(50);
+    canvas.backgroundColor = "#b1b1b1";
     // 绘制圆
     const circle = new fabric.Circle({
-      radius: 50,
-      fill: "red",
-      left: 256,
-      top: 256,
+      radius: 5,
+      fill: "green",
+      left: 25,
+      top: 25,
       hasControls: true,
       hasBorders: true,
       lockMovementX: false,
@@ -20,54 +24,43 @@ const Canvas = () => {
       lockScalingX: false,
       lockScalingY: false,
       lockRotation: false,
-      originX: "left",
-      originY: "top",
+      originX: "center",
+      originY: "center",
       hoverCursor: "pointer",
     });
 
-    canvas.add(circle);
-
-    // 禁止超出画布
-    const canvasWidth = canvas.getWidth();
-    const canvasHeight = canvas.getHeight();
-
-    canvas.on("object:moving", (e: fabric.IEvent) => {
-      const obj = e.target as fabric.Object;
-      const boundingRect = obj.getBoundingRect();
-      const left = boundingRect.left;
-      const top = boundingRect.top;
-      const right = boundingRect.left + boundingRect.width;
-      const bottom = boundingRect.top + boundingRect.height;
-
-      const shouldMoveLeft = left >= 0;
-      const shouldMoveTop = top >= 0;
-      const shouldMoveRight = right <= canvasWidth;
-      const shouldMoveBottom = bottom <= canvasHeight;
-
-      if (
-        !shouldMoveLeft ||
-        !shouldMoveTop ||
-        !shouldMoveRight ||
-        !shouldMoveBottom
-      ) {
-        obj.set({
-          left: shouldMoveLeft ? left : obj.left,
-          top: shouldMoveTop ? top : obj.top,
-        });
-      }
-
-      window.addEventListener("mouseup", function () {
-        console.log(obj.getScaledWidth());
-      });
+    // 创建一个正方形
+    const rectangle = new fabric.Rect({
+      left: 1,
+      top: 1,
+      width: 10,
+      height: 10,
+      fill: "blue",
     });
 
+    canvas.add(circle, rectangle);
     // 清理画布
     return () => {
-      canvas.dispose();
+      canvas?.dispose();
     };
   }, []);
 
-  return <canvas id="canvas"></canvas>;
+  const { drawCsv } = useDrawCsv();
+
+  const toCsv = () => {
+    if (!canvas) return;
+    const csvData = drawCsv(canvas, canvas.getObjects());
+    console.log(csvData);
+  };
+
+  return (
+    <Space>
+      <Button type="primary" onClick={toCsv}>
+        生成csv矩阵
+      </Button>
+      <canvas id="canvas"></canvas>
+    </Space>
+  );
 };
 
 export default Canvas;

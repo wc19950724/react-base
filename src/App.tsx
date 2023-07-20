@@ -9,6 +9,8 @@ import { Image, Layout, Menu, MenuProps, theme } from "antd";
 import { useState } from "react";
 import { FC } from "react";
 
+import Canvas from "@/pages/canvas";
+
 type MenuItem = Required<MenuProps>["items"][number];
 
 function getItem(
@@ -77,7 +79,9 @@ const App: FC = () => {
         >
           Header
         </Layout.Header>
-        <Layout.Content className="overflow-auto">Content</Layout.Content>
+        <Layout.Content className="overflow-auto" style={{ padding: "16px" }}>
+          <Canvas></Canvas>
+        </Layout.Content>
       </Layout>
     </Layout>
   );
