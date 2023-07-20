@@ -1,11 +1,12 @@
 import { Button, Space } from "antd";
 import { fabric } from "fabric";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import useDrawCsv from "@/hooks/useDrawCsv";
 
 const Canvas = () => {
   let canvas: fabric.Canvas | null;
+  const [csvText, setCsvText] = useState("");
   useEffect(() => {
     canvas = new fabric.Canvas("canvas");
     canvas.setWidth(50);
@@ -51,6 +52,7 @@ const Canvas = () => {
     if (!canvas) return;
     const csvData = drawCsv(canvas, canvas.getObjects());
     console.log(csvData);
+    setCsvText(csvData.map((item) => item.join(",")).join("\n"));
   };
 
   return (
@@ -59,6 +61,7 @@ const Canvas = () => {
         生成csv矩阵
       </Button>
       <canvas id="canvas"></canvas>
+      <code>{csvText}</code>
     </Space>
   );
 };
