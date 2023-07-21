@@ -1,23 +1,23 @@
 import { Button, Space } from "antd";
 import { fabric } from "fabric";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-import useDrawCsv from "@/hooks/useDrawCsv";
+import { getCsv } from "@/utils/canvas";
 
 const Canvas = () => {
-  let canvas: fabric.Canvas | null;
+  const canvas = useRef<fabric.Canvas>();
   const [csvText, setCsvText] = useState("");
   useEffect(() => {
-    canvas = new fabric.Canvas("canvas");
-    canvas.setWidth(50);
-    canvas.setHeight(50);
-    canvas.backgroundColor = "#b1b1b1";
+    canvas.current = new fabric.Canvas("canvas");
+    canvas.current.setWidth(512);
+    canvas.current.setHeight(512);
+    canvas.current.backgroundColor = "#b1b1b1";
     // 绘制圆
     const circle = new fabric.Circle({
-      radius: 5,
+      radius: 20,
       fill: "green",
-      left: 25,
-      top: 25,
+      left: 256,
+      top: 256,
       hasControls: true,
       hasBorders: true,
       lockMovementX: false,
@@ -32,35 +32,42 @@ const Canvas = () => {
 
     // 创建一个正方形
     const rectangle = new fabric.Rect({
-      left: 1,
-      top: 1,
-      width: 10,
-      height: 10,
+      left: 5,
+      top: 5,
+      width: 30,
+      height: 30,
       fill: "blue",
+      angle: 60,
     });
 
-    canvas.add(circle, rectangle);
+    canvas.current.add(circle, rectangle);
+
+    canvas.current.on("object:modified", (e) => {
+      console.log(e);
+    });
     // 清理画布
     return () => {
-      canvas?.dispose();
+      canvas.current?.dispose();
     };
   }, []);
 
-  const { drawCsv } = useDrawCsv();
-
   const toCsv = () => {
-    if (!canvas) return;
-    const csvData = drawCsv(canvas, canvas.getObjects());
-    console.log(csvData);
-    setCsvText(csvData.map((item) => item.join(",")).join("\n"));
+    if (!canvas.current) return;
+    const csvData = getCsv(canvas.current, canvas.current.getObjects());
+    const text = csvData.map((item) => item.join(",")).join("\n");
+    console.log(canvas.current);
+
+    setCsvText(text);
   };
 
   return (
-    <Space>
-      <Button type="primary" onClick={toCsv}>
-        生成csv矩阵
-      </Button>
-      <canvas id="canvas"></canvas>
+    <Space direction="vertical">
+      <Space>
+        <Button type="primary" onClick={toCsv}>
+          生成csv矩阵
+        </Button>
+        <canvas id="canvas"></canvas>
+      </Space>
       <code>{csvText}</code>
     </Space>
   );
