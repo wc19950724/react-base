@@ -2,9 +2,7 @@ import { Button, Space } from "antd";
 import { fabric } from "fabric";
 import { useEffect, useRef, useState } from "react";
 
-import { getCsv, updateCsv } from "@/utils/canvas";
-
-let data: string[][] = [[]];
+import { getCsv } from "@/utils/canvas";
 
 const Canvas = () => {
   const canvas = useRef<fabric.Canvas>();
@@ -15,9 +13,8 @@ const Canvas = () => {
     canvas.current.setHeight(512);
     canvas.current.backgroundColor = "#b1b1b1";
     canvas.current.on("object:modified", (e) => {
-      if (!e.target) return;
-      const text = updateCsv(data, e.target);
-      data = text;
+      if (!e.target || !canvas.current) return;
+      const text = getCsv(canvas.current, canvas.current.getObjects());
       setCsvData(text);
     });
     // 清理画布
@@ -38,22 +35,23 @@ const Canvas = () => {
     });
     canvas.current.add(rectangle);
     const text = getCsv(canvas.current, canvas.current.getObjects());
-    data = text;
     setCsvData(text);
   };
 
   const createCircle = () => {
     if (!canvas.current) return;
     const Circle = new fabric.Circle({
-      left: 5,
-      top: 5,
-      radius: 20,
+      left: 0,
+      top: 0,
+      radius: 50,
       fill: "green",
+      angle: 60,
+      originX: "center",
+      originY: "center",
     });
     canvas.current.add(Circle);
     const text = getCsv(canvas.current, canvas.current.getObjects());
     setCsvData(text);
-    data = text;
   };
 
   return (
