@@ -6,16 +6,30 @@ import { getCsv } from "@/utils/canvas";
 
 const Canvas = () => {
   const canvas = useRef<fabric.Canvas>();
+  const tempCanvas = useRef<fabric.Canvas>();
   const [csvData, setCsvData] = useState<string[][]>([[]]);
   useEffect(() => {
+    console.log(tempCanvas);
+
     canvas.current = new fabric.Canvas("canvas");
+    tempCanvas.current = new fabric.Canvas("tempCanvas");
     canvas.current.setWidth(512);
     canvas.current.setHeight(512);
+    tempCanvas.current.setWidth(512);
+    tempCanvas.current.setHeight(512);
     canvas.current.backgroundColor = "#b1b1b1";
     canvas.current.on("object:modified", (e) => {
       if (!e.target || !canvas.current) return;
-      const text = getCsv(canvas.current, canvas.current.getObjects());
-      setCsvData(text);
+      if (tempCanvas.current) {
+        const objects = canvas.current.getObjects();
+
+        tempCanvas.current.renderCanvas(
+          tempCanvas.current.getContext(),
+          objects,
+        );
+        const text = getCsv(tempCanvas.current);
+        setCsvData(text);
+      }
     });
     // 清理画布
     return () => {
@@ -27,15 +41,22 @@ const Canvas = () => {
   const createRect = () => {
     if (!canvas.current) return;
     const rectangle = new fabric.Rect({
-      left: 5,
-      top: 5,
+      left: 80,
+      top: 80,
       width: 30,
       height: 60,
       fill: "blue",
+      angle: 34,
     });
     canvas.current.add(rectangle);
-    const text = getCsv(canvas.current, canvas.current.getObjects());
-    setCsvData(text);
+    canvas.current.renderAll();
+    if (tempCanvas.current) {
+      const objects = canvas.current.getObjects();
+
+      tempCanvas.current.renderCanvas(tempCanvas.current.getContext(), objects);
+      const text = getCsv(tempCanvas.current);
+      setCsvData(text);
+    }
   };
 
   const createCircle = () => {
@@ -50,8 +71,14 @@ const Canvas = () => {
       originY: "center",
     });
     canvas.current.add(Circle);
-    const text = getCsv(canvas.current, canvas.current.getObjects());
-    setCsvData(text);
+    canvas.current.renderAll();
+    if (tempCanvas.current) {
+      const objects = canvas.current.getObjects();
+
+      tempCanvas.current.renderCanvas(tempCanvas.current.getContext(), objects);
+      const text = getCsv(tempCanvas.current);
+      setCsvData(text);
+    }
   };
 
   return (
@@ -66,6 +93,7 @@ const Canvas = () => {
       </Space>
       <Space>
         <canvas id="canvas"></canvas>
+        <canvas id="tempCanvas"></canvas>
       </Space>
       <code>{csvData.map((item) => item.join(",")).join("\n")}</code>
     </Space>

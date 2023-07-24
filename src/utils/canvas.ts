@@ -13,28 +13,27 @@ export const geteArea = (obj: fabric.Object): number => {
 };
 const YES_SYMBOL: string = "●";
 const NO_SYMBOL: string = "○";
-export const getCsv = (canvas: fabric.Canvas, objects: fabric.Object[]) => {
+export const getCsv = (canvas: fabric.Canvas) => {
   const canvasWidth = canvas.getWidth();
   const canvasHeight = canvas.getHeight();
 
   const csvData = new Array(canvasHeight)
     .fill(NO_SYMBOL)
     .map(() => new Array<typeof NO_SYMBOL>(canvasWidth).fill(NO_SYMBOL));
-
-  for (let i = 0; i < objects.length; i++) {
-    const obj = objects[i];
-    const { width, height, left, top } = obj.getBoundingRect();
-    // 遍历画布上的每个像素点
-    for (let y = 0; y < height; y++) {
-      for (let x = 0; x < width; x++) {
-        const DX = Math.ceil(x + left);
-        const DY = Math.ceil(y + top);
-        if (DX < 0 || DY < 0 || DX > canvasWidth || DY > canvasHeight) continue;
-        // 判断当前像素点是否在任意元素内部
-        // 将当前像素点设置为1，表示有元素
-        const ponit = new fabric.Point(DX, DY);
-        csvData[DY][DX] = obj.containsPoint(ponit) ? YES_SYMBOL : NO_SYMBOL;
-      }
+  const ctx = canvas.getContext();
+  const objImageData = ctx.getImageData(0, 0, canvasWidth, canvasHeight).data;
+  for (let i = 0; i < objImageData.length; i += 4) {
+    const x = Math.floor((i % (canvasWidth * 4)) / 4);
+    const y = Math.floor(i / (canvasHeight * 4));
+    if (
+      objImageData[i] ||
+      objImageData[i + 1] ||
+      objImageData[i + 2] ||
+      objImageData[i + 3]
+    ) {
+      csvData[y][x] = YES_SYMBOL;
+    } else {
+      csvData[y][x] = NO_SYMBOL;
     }
   }
   return csvData;
