@@ -88,6 +88,7 @@ export default (
     devServer: {
       open: true,
       host: "0.0.0.0",
+      historyApiFallback: true,
     },
     resolve: {
       extensions: [".js", ".jsx", ".ts", ".tsx"],
