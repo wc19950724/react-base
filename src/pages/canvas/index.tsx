@@ -14,9 +14,6 @@ const Canvas = () => {
     canvas.current.backgroundColor = "#232829";
     setApaCanvas();
     createCar();
-    const obj = canvas.current.getObjects();
-    console.log(obj);
-
     canvas.current.on("mouse:move", ({ e }) => {
       const [x, y] = [e.offsetX, e.offsetY];
       const [centerX, centerY] = Center2Origin(x, y);
