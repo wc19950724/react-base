@@ -18,7 +18,7 @@ const formatRouteToMenuItem = (route: (typeof routes)[number]) => {
   if (route.path) {
     menuItem.key = route.path;
   } else if (route.index) {
-    menuItem.key = "/";
+    menuItem.key = "/index";
   }
   if (route.meta?.icon) {
     menuItem.icon = route.meta.icon;
@@ -65,7 +65,7 @@ const Layout = () => {
         <Menu
           className="flex-1 overflow-y-auto"
           theme="dark"
-          defaultSelectedKeys={["/"]}
+          defaultSelectedKeys={["/index"]}
           defaultOpenKeys={["/"]}
           mode="inline"
           items={getMenuByRoutes()}
