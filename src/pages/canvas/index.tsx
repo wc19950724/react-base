@@ -1,15 +1,18 @@
-import { fabric } from "fabric";
+import { Canvas as fabricCanvas } from "fabric";
 import { useEffect, useRef, useState } from "react";
+
+import { Draw } from "./draw";
 
 const Canvas = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [fbCanvas, setFbCanvas] = useState<fabric.Canvas | null>(null);
+  const [fbCanvas, setFbCanvas] = useState<fabricCanvas | null>(null);
   useEffect(() => {
     if (!canvasRef.current) return;
-    const canvas = new fabric.Canvas(canvasRef.current, {
+    const canvas = new fabricCanvas(canvasRef.current, {
       width: canvasRef.current.offsetWidth,
       height: canvasRef.current.offsetHeight,
       backgroundColor: "#232829",
+      selection: false,
     });
     setFbCanvas(canvas);
     return () => {
@@ -18,7 +21,9 @@ const Canvas = () => {
     };
   }, []);
   useEffect(() => {
-    console.log(fbCanvas, "fbCanvas");
+    if (fbCanvas) {
+      new Draw(fbCanvas);
+    }
   }, [fbCanvas]);
   return (
     <canvas
