@@ -97,5 +97,6 @@ export default (
         "~": path.join(__dirname),
       },
     },
+    devtool: mode !== "production" && "inline-source-map",
   };
 };
