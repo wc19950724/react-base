@@ -1,7 +1,7 @@
 import { Canvas as fabricCanvas } from "fabric";
 import { useEffect, useRef, useState } from "react";
 
-import { Draw } from "./draw";
+import { BasicDraw } from "./utils";
 
 const Canvas = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -14,6 +14,7 @@ const Canvas = () => {
       backgroundColor: "#232829",
       selection: false,
     });
+    canvas.requestRenderAll();
     setFbCanvas(canvas);
     return () => {
       canvas.dispose();
@@ -22,7 +23,8 @@ const Canvas = () => {
   }, []);
   useEffect(() => {
     if (fbCanvas) {
-      new Draw(fbCanvas);
+      const draw = new BasicDraw(fbCanvas);
+      draw.renderBtn();
     }
   }, [fbCanvas]);
   return (
