@@ -1,16 +1,36 @@
 import { Canvas as fabricCanvas } from "fabric";
 import { useEffect, useRef, useState } from "react";
 
-import { BasicDraw } from "./utils";
+import { useAnimationFrame } from "@/hooks/useAnimationFrame";
 
+import { BasicDraw } from "./utils";
+const CANVAS_ID = "my-canvas";
 const Canvas = () => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const [fbCanvas, setFbCanvas] = useState<fabricCanvas | null>(null);
+  const { hanlder } = useAnimationFrame();
+  // 使用ResizeObserver监听父元素尺寸变化
+  const resizeObserver = new ResizeObserver(function (entries) {
+    hanlder(() => {
+      for (const entry of entries) {
+        const newWidth = entry.contentRect.width;
+        const newHeight = entry.contentRect.height;
+
+        fbCanvas?.setDimensions({
+          width: newWidth,
+          height: newHeight,
+        });
+
+        fbCanvas?.renderAll();
+      }
+    });
+  });
   useEffect(() => {
-    if (!canvasRef.current) return;
-    const canvas = new fabricCanvas(canvasRef.current, {
-      width: canvasRef.current.offsetWidth,
-      height: canvasRef.current.offsetHeight,
+    if (!wrapperRef.current) return;
+
+    const canvas = new fabricCanvas(CANVAS_ID, {
+      width: wrapperRef.current.offsetWidth,
+      height: wrapperRef.current.offsetHeight,
       backgroundColor: "#232829",
       selection: false,
     });
@@ -23,19 +43,26 @@ const Canvas = () => {
   }, []);
   useEffect(() => {
     if (fbCanvas) {
-      const draw = new BasicDraw(fbCanvas);
-      draw.renderBtn();
+      new BasicDraw(fbCanvas);
+      if (wrapperRef.current) {
+        resizeObserver.observe(wrapperRef.current);
+      }
+      return () => {
+        resizeObserver.disconnect();
+      };
     }
   }, [fbCanvas]);
   return (
-    <canvas
-      ref={canvasRef}
+    <div
+      ref={wrapperRef}
       style={{
         width: "100%",
         height: "100%",
         display: "block",
       }}
-    ></canvas>
+    >
+      <canvas id={CANVAS_ID}></canvas>
+    </div>
   );
 };
 

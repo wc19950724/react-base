@@ -23,7 +23,7 @@ const opacityStep = 0.6;
  * 创建按钮图形
  * render函数绘制图形到画布
  */
-export class CreateButton {
+export class Button {
   config: DrawOptions;
   canvas?: Canvas;
   isHover?: boolean;
@@ -132,7 +132,7 @@ export class CreateButton {
  */
 export class BasicDraw {
   canvas: Canvas;
-  buttons: CreateButton[] = [];
+  buttons: Button[] = [];
   #baseGroup: DrawOptions["group"] = {
     selectable: false,
     hoverCursor: "pointer",
@@ -174,11 +174,12 @@ export class BasicDraw {
   ];
   constructor(canvas: Canvas) {
     this.canvas = canvas;
+    this.render();
   }
 
-  renderBtn() {
+  render() {
     this.groups.forEach((item) => {
-      const button = new CreateButton(item, this.canvas);
+      const button = new Button(item, this.canvas);
       this.buttons.push(button);
     });
   }
