@@ -28,6 +28,7 @@ export const routes: RouteMenu[] = [
     element: <Layout />,
     meta: {
       title: "首页",
+      icon: <PieChartOutlined />,
     },
     children: [
       {
