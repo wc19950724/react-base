@@ -16,6 +16,8 @@ const Canvas = () => {
         const newWidth = entry.contentRect.width;
         const newHeight = entry.contentRect.height;
 
+        // BUG: canvas.dispose() 是异步, 卸载不及时会报错
+        if (!newWidth || !newHeight) return;
         fbCanvas?.setDimensions({
           width: newWidth,
           height: newHeight,
@@ -47,10 +49,10 @@ const Canvas = () => {
       if (wrapperRef.current) {
         resizeObserver.observe(wrapperRef.current);
       }
-      return () => {
-        resizeObserver.disconnect();
-      };
     }
+    return () => {
+      resizeObserver.disconnect();
+    };
   }, [fbCanvas]);
   return (
     <div
