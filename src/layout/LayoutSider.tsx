@@ -1,10 +1,13 @@
 import { Image, Layout as AntdLayout, Menu, MenuProps } from "antd";
 import { SubMenuType } from "antd/es/menu/hooks/useItems";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
-import { routes } from "@/router";
+import { HOME_PARENT, HOME_PATH, routes } from "@/router";
 
 type MenuItem = Required<MenuProps>["items"][number];
+
+type SelectEventHandler = MenuProps["onSelect"];
 
 const formatRouteToMenuItem = (route: (typeof routes)[number]) => {
   const menuItem: MenuItem = {
@@ -15,8 +18,6 @@ const formatRouteToMenuItem = (route: (typeof routes)[number]) => {
   }
   if (route.path) {
     menuItem.key = route.path;
-  } else if (route.index) {
-    menuItem.key = "/index";
   }
   if (route.meta?.icon) {
     menuItem.icon = route.meta.icon;
@@ -38,7 +39,19 @@ const getMenuByRoutes = (): MenuItem[] => {
 };
 
 const LayoutSider = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    setSelectedKeys([location.pathname]);
+  }, [location]);
+
   const [collapsed, setCollapsed] = useState(false);
+  const [selectedKeys, setSelectedKeys] = useState([HOME_PATH]);
+
+  const selectHandler: SelectEventHandler = (e) => {
+    navigate(e.key);
+  };
 
   return (
     <AntdLayout.Sider
@@ -59,10 +72,11 @@ const LayoutSider = () => {
       <Menu
         className="flex-1 overflow-y-auto"
         theme="dark"
-        defaultSelectedKeys={["/index"]}
-        defaultOpenKeys={["/"]}
+        selectedKeys={selectedKeys}
+        defaultOpenKeys={[HOME_PARENT]}
         mode="inline"
         items={getMenuByRoutes()}
+        onSelect={selectHandler}
       />
     </AntdLayout.Sider>
   );

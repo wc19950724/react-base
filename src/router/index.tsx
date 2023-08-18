@@ -1,6 +1,10 @@
 import { PieChartOutlined } from "@ant-design/icons";
 import { lazy, ReactNode } from "react";
-import { IndexRouteObject, NonIndexRouteObject } from "react-router-dom";
+import {
+  IndexRouteObject,
+  Navigate,
+  NonIndexRouteObject,
+} from "react-router-dom";
 
 import Layout from "@/layout";
 
@@ -22,6 +26,9 @@ export interface NonIndexRouteMenu extends NonIndexRouteObject {
 
 export type RouteMenu = IndexRouteMenu | NonIndexRouteMenu;
 
+export const HOME_PATH = "/index";
+export const HOME_PARENT = "/";
+
 export const routes: RouteMenu[] = [
   {
     path: "/",
@@ -33,6 +40,19 @@ export const routes: RouteMenu[] = [
     children: [
       {
         index: true,
+        path: "/",
+        element: <Navigate to={HOME_PATH} />, // 重定向到 /index
+      },
+      {
+        path: HOME_PATH,
+        Component: lazy(() => import("@/pages/welcome")),
+        meta: {
+          title: "Welcome",
+          icon: <PieChartOutlined />,
+        },
+      },
+      {
+        path: "/canvas",
         Component: lazy(() => import("@/pages/canvas")),
         meta: {
           title: "Canvas",
