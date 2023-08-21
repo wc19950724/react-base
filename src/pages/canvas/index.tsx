@@ -1,5 +1,5 @@
 import { Canvas as fabricCanvas } from "fabric";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 import { useAnimationFrame } from "@/hooks/useAnimationFrame";
 
@@ -7,7 +7,8 @@ import { BasicDraw } from "./utils";
 const CANVAS_ID = "my-canvas";
 const Canvas = () => {
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const [fbCanvas, setFbCanvas] = useState<fabricCanvas | null>(null);
+  // [x]: fbCanvas不涉及页面渲染, 仅存储, 所以使用useRef替换useState
+  const fbCanvas = useRef<fabricCanvas>();
   const { hanlder } = useAnimationFrame();
   // 使用ResizeObserver监听父元素尺寸变化
   const resizeObserver = new ResizeObserver(function (entries) {
@@ -18,12 +19,12 @@ const Canvas = () => {
 
         // FIXME: canvas.dispose() 是异步, 卸载不及时会报错
         if (!newWidth || !newHeight) return;
-        fbCanvas?.setDimensions({
+        fbCanvas.current?.setDimensions({
           width: newWidth,
           height: newHeight,
         });
 
-        fbCanvas?.renderAll();
+        fbCanvas.current?.renderAll();
       }
     });
   });
@@ -37,15 +38,15 @@ const Canvas = () => {
       selection: false,
     });
     canvas.requestRenderAll();
-    setFbCanvas(canvas);
+    fbCanvas.current = canvas;
     return () => {
       canvas.dispose();
-      setFbCanvas(null);
+      fbCanvas.current = undefined;
     };
   }, []);
   useEffect(() => {
-    if (fbCanvas) {
-      new BasicDraw(fbCanvas);
+    if (fbCanvas.current) {
+      new BasicDraw(fbCanvas.current);
       if (wrapperRef.current) {
         resizeObserver.observe(wrapperRef.current);
       }
@@ -53,7 +54,7 @@ const Canvas = () => {
     return () => {
       resizeObserver.disconnect();
     };
-  }, [fbCanvas]);
+  }, [fbCanvas.current]);
   return (
     <div
       ref={wrapperRef}
