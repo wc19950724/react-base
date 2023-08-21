@@ -4,7 +4,7 @@ import { ConfigProvider } from "antd";
 import React from "react";
 import { createRoot } from "react-dom/client";
 
-import { versionShow } from "@/utils";
+import { versionShow } from "@/utils/version";
 
 import App from "./App";
 const root = createRoot(document.getElementById("root") || document.body);

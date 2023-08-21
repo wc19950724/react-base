@@ -39,6 +39,7 @@ export default (
       filename: "js/[name].[contenthash].js",
       assetModuleFilename: "[ext]/[name].[contenthash].[ext]",
       path: path.resolve(__dirname, "dist"),
+      publicPath: "/",
     },
     performance: {
       hints: mode === "production" && "warning",
