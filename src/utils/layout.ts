@@ -1,7 +1,6 @@
 import { SubMenuType } from "antd/es/menu/hooks/useItems";
 
-import { MenuItem } from "@/typings/antd";
-import { RouteMenu } from "@/typings/routes";
+import { MenuItem, RouteMenu } from "@/typings/routes";
 
 /**
  * 通过路由配置格式化菜单配置
@@ -22,7 +21,7 @@ export const formatMenuByRoute = <T extends RouteMenu>(route: T) => {
     const children = route.children
       .map((child) => formatMenuByRoute(child))
       .filter((child) => child.key && child.label);
-    (menuItem as SubMenuType).children = children;
+    menuItem.children = children;
   }
 
   return menuItem;

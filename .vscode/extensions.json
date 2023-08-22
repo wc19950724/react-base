@@ -5,5 +5,4 @@
     "eamodio.gitlens",
     "dbaeumer.vscode-eslint"
   ],
-  "unwantedRecommendations": ["esbenp.prettier-vscode"]
 }

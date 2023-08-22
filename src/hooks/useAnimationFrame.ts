@@ -21,7 +21,7 @@ export const useAnimationFrame = () => {
    * @param key 事件锁的key, 相同key会触发事件锁
    * @returns 结束动画帧回调
    */
-  const hanlder = (fn: (time?: number) => void, key = LockMapKey.DEFAULT) => {
+  const handler = (fn: (time?: number) => void, key = LockMapKey.DEFAULT) => {
     let id;
     if (lock.has(key)) {
       id = lock.get(key);
@@ -41,6 +41,6 @@ export const useAnimationFrame = () => {
 
   return {
     lock,
-    hanlder,
+    handler,
   };
 };

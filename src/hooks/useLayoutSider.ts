@@ -14,7 +14,7 @@ export const useMenuByRoutes = <T extends RouteMenu[]>(routes: T) => {
 
   const menu = routes
     .map((route) => formatMenuByRoute(route))
-    .filter((route) => route.key && route.label);
+    .filter((route) => route.label);
 
   const onSelect: SelectEventHandler = (e) => {
     navigate(e.key);

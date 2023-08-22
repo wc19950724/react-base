@@ -9,10 +9,10 @@ const Canvas = () => {
   const wrapperRef = useRef<HTMLDivElement>(null);
   // [x]: fbCanvas不涉及页面渲染, 仅存储, 所以使用useRef替换useState
   const fbCanvas = useRef<fabricCanvas>();
-  const { hanlder } = useAnimationFrame();
+  const { handler } = useAnimationFrame();
   // 使用ResizeObserver监听父元素尺寸变化
   const resizeObserver = new ResizeObserver(function (entries) {
-    hanlder(() => {
+    handler(() => {
       for (const entry of entries) {
         const newWidth = entry.contentRect.width;
         const newHeight = entry.contentRect.height;
