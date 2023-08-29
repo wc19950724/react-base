@@ -3,6 +3,8 @@
  */
 export enum LockMapKey {
   DEFAULT = "DEFAULT",
+  /** 调整大小 */
+  RESIZE = "RESIZE",
 }
 
 /** 动画帧渲染hook */

@@ -1,70 +1,60 @@
 import { Canvas as fabricCanvas } from "fabric";
 import { useEffect, useRef } from "react";
 
-import { useAnimationFrame } from "@/hooks/useAnimationFrame";
+import DatGui from "./dat-gui";
+import { BasicDraw, CANVAS_ID, CANVAS_WRAPPER_ID } from "./utils";
 
-import { BasicDraw } from "./utils";
-const CANVAS_ID = "my-canvas";
 const Canvas = () => {
   const wrapperRef = useRef<HTMLDivElement>(null);
   // [x]: fbCanvas不涉及页面渲染, 仅存储, 所以使用useRef替换useState
   const fbCanvas = useRef<fabricCanvas>();
-  const { handler } = useAnimationFrame();
-  // 使用ResizeObserver监听父元素尺寸变化
-  const resizeObserver = new ResizeObserver(function (entries) {
-    handler(() => {
-      for (const entry of entries) {
-        const newWidth = entry.contentRect.width;
-        const newHeight = entry.contentRect.height;
+  const basicObjects = useRef<BasicDraw>();
 
-        // FIXME: canvas.dispose() 是异步, 卸载不及时会报错
-        if (!newWidth || !newHeight) return;
-        fbCanvas.current?.setDimensions({
-          width: newWidth,
-          height: newHeight,
-        });
-
-        fbCanvas.current?.renderAll();
-      }
-    });
-  });
   useEffect(() => {
-    if (!wrapperRef.current) return;
-
-    const canvas = new fabricCanvas(CANVAS_ID, {
-      width: wrapperRef.current.offsetWidth,
-      height: wrapperRef.current.offsetHeight,
-      backgroundColor: "#232829",
-      selection: false,
-    });
-    canvas.requestRenderAll();
-    fbCanvas.current = canvas;
+    if (wrapperRef.current) {
+      const canvas = new fabricCanvas(CANVAS_ID, {
+        width: wrapperRef.current.offsetWidth,
+        height: wrapperRef.current.offsetHeight,
+        backgroundColor: "#232829",
+        selection: false,
+        renderOnAddRemove: false,
+      });
+      // canvas.requestRenderAll();
+      fbCanvas.current = canvas;
+    }
     return () => {
-      canvas.dispose();
+      fbCanvas.current?.dispose();
       fbCanvas.current = undefined;
     };
   }, []);
   useEffect(() => {
     if (fbCanvas.current) {
-      new BasicDraw(fbCanvas.current);
+      basicObjects.current = new BasicDraw(fbCanvas.current);
+      basicObjects.current.renderViewport();
+
       if (wrapperRef.current) {
-        resizeObserver.observe(wrapperRef.current);
+        basicObjects.current.observe(wrapperRef.current);
       }
     }
     return () => {
-      resizeObserver.disconnect();
+      basicObjects.current?.reset();
     };
   }, [fbCanvas.current]);
+
   return (
     <div
       ref={wrapperRef}
+      id={CANVAS_WRAPPER_ID}
       style={{
         width: "100%",
         height: "100%",
         display: "block",
+        position: "relative",
       }}
     >
       <canvas id={CANVAS_ID}></canvas>
+
+      <DatGui />
     </div>
   );
 };
