@@ -44,7 +44,7 @@ export default (
     performance: {
       hints: mode === "production" && "warning",
       maxEntrypointSize: 1024 * 1024, // 1 MiB
-      maxAssetSize: 512 * 1024, // 512 KiB
+      maxAssetSize: 1024 * 1024, // 512 KiB
     },
     optimization: {
       splitChunks: {

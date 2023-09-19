@@ -19,29 +19,25 @@ export const routes: RouteMenu[] = [
     },
   },
   {
-    path: "/canvas",
-    Component: lazy(() => import("@/pages/canvas")),
+    path: "",
     meta: {
-      title: "Canvas",
-      icon: <PieChartOutlined />,
-    },
-  },
-  {
-    path: "/test",
-    meta: {
-      title: "测试",
+      title: "Fabric.js渲染优化",
       icon: <PieChartOutlined />,
     },
     children: [
       {
-        path: "/test",
-        element: <Navigate to="/test/test" />, // 重定向到 /test/test
+        path: "/fabric/object",
+        Component: lazy(() => import("@/pages/fabric/object")),
+        meta: {
+          title: "fabric-object",
+          icon: <PieChartOutlined />,
+        },
       },
       {
-        path: "/test/test",
-        Component: lazy(() => import("@/pages/welcome")),
+        path: "/fabric/group",
+        Component: lazy(() => import("@/pages/fabric/group")),
         meta: {
-          title: "测试页面",
+          title: "fabric-group",
           icon: <PieChartOutlined />,
         },
       },
