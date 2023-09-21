@@ -19,6 +19,31 @@ export const routes: RouteMenu[] = [
     },
   },
   {
+    path: "",
+    meta: {
+      title: "Fabric.js渲染优化",
+      icon: <PieChartOutlined />,
+    },
+    children: [
+      {
+        path: "/fabric/object",
+        Component: lazy(() => import("@/pages/fabric/object")),
+        meta: {
+          title: "fabric-object",
+          icon: <PieChartOutlined />,
+        },
+      },
+      {
+        path: "/fabric/group",
+        Component: lazy(() => import("@/pages/fabric/group")),
+        meta: {
+          title: "fabric-group",
+          icon: <PieChartOutlined />,
+        },
+      },
+    ],
+  },
+  {
     path: "*",
     Component: lazy(() => import("@/components/NotFound")),
   },

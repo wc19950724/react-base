@@ -1,4 +1,4 @@
-import { BrowserRouter, useRoutes } from "react-router-dom";
+import { HashRouter, useRoutes } from "react-router-dom";
 
 import Layout from "./layout";
 import { routes } from "./router";
@@ -6,11 +6,11 @@ import { routes } from "./router";
 const App = () => {
   const GetRoutes = () => useRoutes(routes);
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Layout>
         <GetRoutes />
       </Layout>
-    </BrowserRouter>
+    </HashRouter>
   );
 };
 

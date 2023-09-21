@@ -38,8 +38,8 @@ export default (
       chunkFilename: "js/[name].[contenthash].js",
       filename: "js/[name].[contenthash].js",
       assetModuleFilename: "[ext]/[name].[contenthash].[ext]",
-      path: path.resolve(__dirname, "dist"),
-      publicPath: "/",
+      path: path.resolve(__dirname, "docs"),
+      publicPath: "/react-base/",
     },
     performance: {
       hints: mode === "production" && "warning",

@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkreact_base=self.webpackChunkreact_base||[]).push([[155],{155:(e,a,s)=>{s.r(a),s.d(a,{default:()=>l});var c=s(1527);const l=()=>(0,c.jsx)("div",{className:"welcome-page",children:(0,c.jsx)("h1",{className:"welcome-heading",children:"欢迎来到基于React + tsx的个人练习项目"})})}}]);
