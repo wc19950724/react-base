@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "redjue.git-commit-plugin",
+    "gruntfuggly.todo-tree",
+    "eamodio.gitlens",
+    "dbaeumer.vscode-eslint"
+  ],
+}

@@ -1,14 +1,17 @@
-import { useState } from "react";
+import { BrowserRouter, useRoutes } from "react-router-dom";
 
-export default function App() {
-  const [data, setData] = useState("hello world");
-  const inputHandler = (e: React.FormEvent) => {
-    setData((e.target as HTMLInputElement).value);
-  };
+import Layout from "./layout";
+import { routes } from "./router";
+
+const App = () => {
+  const GetRoutes = () => useRoutes(routes);
   return (
-    <>
-      <div>{data}</div>
-      <input type="text" onInput={inputHandler} />
-    </>
+    <BrowserRouter>
+      <Layout>
+        <GetRoutes />
+      </Layout>
+    </BrowserRouter>
   );
-}
+};
+
+export default App;

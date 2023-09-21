@@ -10,5 +10,8 @@
     "*.lock": false,
     "LICENSE": false,
     "pnpm-lock.yaml": false
-  }
+  },
+  "[less]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
 }
