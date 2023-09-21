@@ -13,5 +13,5 @@
   },
   "[less]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
+  }
 }

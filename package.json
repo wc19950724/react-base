@@ -18,11 +18,16 @@
   "dependencies": {
     "@ant-design/icons": "^5.1.4",
     "antd": "^5.7.0",
+    "fabric": "6.0.0-beta10",
+    "lodash": "^4.17.21",
+    "mobx": "^6.10.0",
+    "mobx-react-lite": "^4.0.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.15.0"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.197",
     "@types/node": "^20.4.2",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
@@ -41,6 +46,7 @@
     "lint-staged": "^13.2.3",
     "mini-css-extract-plugin": "^2.7.6",
     "prettier": "^3.0.0",
+    "react-dat-gui": "^4.1.1",
     "simple-git-hooks": "^2.8.1",
     "style-loader": "^3.3.3",
     "ts-loader": "^9.4.4",

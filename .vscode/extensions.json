@@ -4,5 +4,5 @@
     "gruntfuggly.todo-tree",
     "eamodio.gitlens",
     "dbaeumer.vscode-eslint"
-  ],
+  ]
 }
