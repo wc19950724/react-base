@@ -39,7 +39,7 @@ export default (
       filename: "js/[name].[contenthash].js",
       assetModuleFilename: "[ext]/[name].[contenthash].[ext]",
       path: path.resolve(__dirname, "docs"),
-      publicPath: "/react-base/",
+      publicPath: mode === "production" ? "/react-base/" : "/",
     },
     performance: {
       hints: mode === "production" && "warning",

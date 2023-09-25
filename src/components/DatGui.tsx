@@ -36,7 +36,7 @@ export const DatGui = observer((props: DatGuiData) => {
         right: "unset",
       }}
     >
-      <DatFolder title="Fabric.js" closed>
+      <DatFolder title="Fabric.js" closed={false}>
         <DatString path="FPS" label="FPS" />
         <DatString path="zoom" label="zoom" />
         <DatString path="vptCoordsTL" label="vptCoordsTL" />

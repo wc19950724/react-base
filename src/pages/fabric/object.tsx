@@ -22,7 +22,6 @@ const Canvas = observer(() => {
       });
       drawObjects.current = new CanvasObjectRenderer(canvas);
       drawObjects.current.renderViewport();
-      drawObjects.current.observe(wrapperRef.current);
       return () => {
         canvas.dispose();
         drawObjects.current?.reset();

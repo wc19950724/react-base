@@ -1,29 +1,33 @@
-import { Canvas as fabricCanvas } from "fabric";
 import { isEqual } from "lodash";
 import { observer } from "mobx-react-lite";
+import { Application } from "pixi.js";
 import { useEffect, useRef, useState } from "react";
 
 import { DatGui, DatGuiData } from "@/components/DatGui";
 
-import { CANVAS_ID, CANVAS_WRAPPER_ID, CanvasGroupRenderer } from "./utils";
+import { PixiRenderer } from "./utils";
 
-const BigMap = observer(() => {
+const Pixi = observer(() => {
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const drawObjects = useRef<CanvasGroupRenderer>();
+  const drawObjects = useRef<PixiRenderer>();
 
   useEffect(() => {
     if (wrapperRef.current) {
-      const canvas = new fabricCanvas(CANVAS_ID, {
-        width: wrapperRef.current.offsetWidth,
-        height: wrapperRef.current.offsetHeight,
+      const { offsetWidth: width, offsetHeight: height } = wrapperRef.current;
+      const app = new Application<HTMLCanvasElement>({
+        width,
+        height,
         backgroundColor: "#232829",
-        selection: false,
-        renderOnAddRemove: false,
+        // antialias: true, // 抗锯齿, 有性能损耗
+        autoStart: false,
       });
-      drawObjects.current = new CanvasGroupRenderer(canvas);
-      drawObjects.current.renderViewport();
+      wrapperRef.current.appendChild(app.view);
+
+      drawObjects.current = new PixiRenderer(app);
+      drawObjects.current.render();
+
       return () => {
-        canvas.dispose();
+        wrapperRef.current?.removeChild(app.view);
         drawObjects.current?.reset();
       };
     }
@@ -40,19 +44,16 @@ const BigMap = observer(() => {
   return (
     <div
       ref={wrapperRef}
-      id={CANVAS_WRAPPER_ID}
       style={{
         width: "100%",
         height: "100%",
-        display: "block",
+        display: "flex",
         position: "relative",
       }}
     >
-      <canvas id={CANVAS_ID}></canvas>
-
       <DatGui {...gui} />
     </div>
   );
 });
 
-export default BigMap;
+export default Pixi;
