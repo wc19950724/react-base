@@ -19,7 +19,7 @@ export const routes: RouteMenu[] = [
     },
   },
   {
-    path: "",
+    path: "/fabric",
     meta: {
       title: "Fabric.js渲染优化",
       icon: <PieChartOutlined />,
@@ -38,6 +38,23 @@ export const routes: RouteMenu[] = [
         Component: lazy(() => import("@/pages/fabric/group")),
         meta: {
           title: "fabric-group",
+          icon: <PieChartOutlined />,
+        },
+      },
+    ],
+  },
+  {
+    path: "/pixi",
+    meta: {
+      title: "Pixi.js渲染优化",
+      icon: <PieChartOutlined />,
+    },
+    children: [
+      {
+        path: "/pixi/index",
+        Component: lazy(() => import("@/pages/pixi/index")),
+        meta: {
+          title: "pixi-index",
           icon: <PieChartOutlined />,
         },
       },

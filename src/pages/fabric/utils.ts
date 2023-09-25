@@ -11,7 +11,7 @@ import {
 import { difference, isEqual } from "lodash";
 
 import { Metrics, Stats } from "@/components/DatGui";
-import { LockMapKey, useAnimationFrame } from "@/hooks/useAnimationFrame";
+import { useAnimationFrame } from "@/hooks/useAnimationFrame";
 import { getRandomInt } from "@/utils/utils";
 
 export const CANVAS_ID = "my-canvas";
@@ -23,7 +23,6 @@ export class BasicDraw {
   canvas: Canvas | null;
   rafId = 0;
   lastVptCoords: TCornerPoint | null = null;
-  resizeObserver: ResizeObserver | null = null;
 
   rightMouseDown = false;
 
@@ -62,24 +61,6 @@ export class BasicDraw {
         this.canvas?.setCursor("default");
       }
     });
-
-    this.resizeObserver = new ResizeObserver((entries) => {
-      handler(() => {
-        for (const entry of entries) {
-          const newWidth = entry.contentRect.width;
-          const newHeight = entry.contentRect.height;
-
-          // FIXME: canvas.dispose() 是异步, 卸载不及时会报错
-          if (!newWidth || !newHeight) return;
-          this.canvas?.setDimensions({
-            width: newWidth,
-            height: newHeight,
-          });
-
-          this.canvas?.renderAll();
-        }
-      }, LockMapKey.RESIZE);
-    });
   }
 
   canvasWheelHandler({ e }: TPointerEventInfo<WheelEvent>) {
@@ -110,20 +91,10 @@ export class BasicDraw {
     this.canvas?.requestRenderAll();
   }
 
-  observe(dom: HTMLElement) {
-    this.resizeObserver?.observe(dom);
-  }
-
-  disconnect() {
-    this.resizeObserver?.disconnect();
-    this.resizeObserver = null;
-  }
-
   reset() {
     this.canvas = null;
     this.rafId = 0;
     this.lastVptCoords = null;
-    this.disconnect();
   }
 }
 
@@ -145,8 +116,8 @@ export class CanvasObjectRenderer extends BasicDraw {
     this.lastVptCoords = vptCoords;
     const { tl, br } = vptCoords;
     this.metrics.setGui({
-      vptCoordsTL: `${tl.x.toFixed(0)}, ${tl.y.toFixed(0)}`,
-      vptCoordsBR: `${br.x.toFixed(0)}, ${br.y.toFixed(0)}`,
+      vptCoordsTL: `${tl.y.toFixed(0)}, ${tl.x.toFixed(0)}`,
+      vptCoordsBR: `${br.y.toFixed(0)}, ${br.x.toFixed(0)}`,
     });
 
     const featuresInViewport: fbObject[] = [];
@@ -250,8 +221,8 @@ export class CanvasGroupRenderer extends BasicDraw {
     this.lastVptCoords = vptCoords;
     const { tl, br } = vptCoords;
     this.metrics.setGui({
-      vptCoordsTL: `${tl.x.toFixed(0)}, ${tl.y.toFixed(0)}`,
-      vptCoordsBR: `${br.x.toFixed(0)}, ${br.y.toFixed(0)}`,
+      vptCoordsTL: `${tl.y.toFixed(0)}, ${tl.x.toFixed(0)}`,
+      vptCoordsBR: `${br.y.toFixed(0)}, ${br.x.toFixed(0)}`,
     });
     const groups = this.canvas?.getObjects();
 
