@@ -26,6 +26,10 @@ export const routes: RouteMenu[] = [
     },
     children: [
       {
+        path: "/fabric",
+        element: <Navigate to="/fabric/object" />,
+      },
+      {
         path: "/fabric/object",
         Component: lazy(() => import("@/pages/fabric/object")),
         meta: {
@@ -50,6 +54,10 @@ export const routes: RouteMenu[] = [
       icon: <PieChartOutlined />,
     },
     children: [
+      {
+        path: "/pixi",
+        element: <Navigate to="/pixi/index" />,
+      },
       {
         path: "/pixi/index",
         Component: lazy(() => import("@/pages/pixi/index")),
