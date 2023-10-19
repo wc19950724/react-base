@@ -13,8 +13,21 @@
     "preinstall": "npx only-allow pnpm",
     "postinstall": "simple-git-hooks"
   },
-  "author": "",
+  "author": {
+    "name": "Wang Chao",
+    "email": "wc19950724@gmail.com",
+    "url": "https://github.com/wc19950724"
+  },
   "license": "MIT",
+  "homepage": "https://wc19950724.github.io/react-base/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wc19950724/react-base"
+  },
+  "bugs": {
+    "url": "https://github.com/wc19950724/react-base/issues",
+    "email": "wc19950724@gmail.com"
+  },
   "dependencies": {
     "@ant-design/icons": "^5.1.4",
     "antd": "^5.7.0",
