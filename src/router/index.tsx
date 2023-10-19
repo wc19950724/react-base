@@ -69,6 +69,27 @@ export const routes: RouteMenu[] = [
     ],
   },
   {
+    path: "/three",
+    meta: {
+      title: "Three.js",
+      icon: <PieChartOutlined />,
+    },
+    children: [
+      {
+        path: "/three",
+        element: <Navigate to="/three/index" />,
+      },
+      {
+        path: "/three/index",
+        Component: lazy(() => import("@/pages/three/index")),
+        meta: {
+          title: "three-index",
+          icon: <PieChartOutlined />,
+        },
+      },
+    ],
+  },
+  {
     path: "*",
     Component: lazy(() => import("@/components/NotFound")),
   },

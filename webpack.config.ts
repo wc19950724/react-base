@@ -45,6 +45,7 @@ export default (
       hints: mode === "production" && "warning",
       maxEntrypointSize: 1024 * 1024, // 1 MiB
       maxAssetSize: 1024 * 1024, // 512 KiB
+      assetFilter: (assetFilename: string) => /\/assets\//.test(assetFilename), // 忽略 /assets 目录文件大小
     },
     optimization: {
       splitChunks: {
@@ -68,6 +69,15 @@ export default (
             "css-loader",
             "less-loader",
           ],
+        },
+        {
+          test: /\.(hdr|usdz)$/i,
+          use: {
+            loader: "file-loader",
+            options: {
+              name: "assets/[name].[ext]", // 输出到 assets 目录
+            },
+          },
         },
       ],
     },
