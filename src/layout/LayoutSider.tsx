@@ -1,12 +1,11 @@
-import { Image, Layout as AntdLayout, Menu } from "antd";
+import { Image, Layout as AntdLayout } from "antd";
 
-import { useMenuByRoutes, useSider } from "@/hooks/useLayoutSider";
-import { routes } from "@/router";
+import { useSider } from "@/hooks/useLayoutSider";
+
+import LayoutMenu from "./LayoutMenu";
 
 const LayoutSider = () => {
   const { collapsed, onCollapse } = useSider();
-  const { menu, selectedKeys, openKeys, onSelect, onOpenChange } =
-    useMenuByRoutes(routes);
 
   return (
     <AntdLayout.Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
@@ -20,16 +19,7 @@ const LayoutSider = () => {
           src="https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg"
         />
       </div>
-      <Menu
-        className="flex-1 overflow-y-auto"
-        theme="dark"
-        selectedKeys={selectedKeys}
-        openKeys={openKeys}
-        mode="inline"
-        items={menu}
-        onSelect={onSelect}
-        onOpenChange={onOpenChange}
-      />
+      <LayoutMenu theme="dark" />
     </AntdLayout.Sider>
   );
 };
