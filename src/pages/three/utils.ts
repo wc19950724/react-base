@@ -35,7 +35,7 @@ export class ThreeScene {
     this.container.appendChild(this.renderer.domElement);
   }
 
-  loadModel(usdzFile: string, hdrFile: string) {
+  loadModel(hdrFile: string, usdzFile: string) {
     const textureLoader = new RGBELoader();
     textureLoader.load(hdrFile, (texture) => {
       texture.mapping = THREE.EquirectangularReflectionMapping;
