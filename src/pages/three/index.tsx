@@ -27,9 +27,8 @@ const ThreeSceneComponent = () => {
   useEffect(() => {
     if (container.current) {
       threeScene = new ThreeScene(container.current);
-
       loadModel(royal_esplanade_1k, DamagedHelmet);
-      render();
+      threeScene.renderer.setAnimationLoop(render);
       containerResize.observe(container.current);
 
       return () => {
@@ -54,7 +53,6 @@ const ThreeSceneComponent = () => {
   };
 
   const render = () => {
-    requestAnimationFrame(render);
     threeScene.stats.update();
     threeScene.renderer.render(threeScene.scene, threeScene.camera);
   };

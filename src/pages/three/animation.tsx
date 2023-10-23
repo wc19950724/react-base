@@ -27,7 +27,7 @@ const ThreeAnimation = () => {
       threeScene = new ThreeScene(container.current);
 
       loadModel(Pedestrians);
-      render();
+      threeScene.renderer.setAnimationLoop(render);
 
       containerResize.observe(container.current);
 
@@ -43,6 +43,12 @@ const ThreeAnimation = () => {
     const loader = new GLTFLoader();
     loader.load(gltfFile, (gltf) => {
       const model = gltf.scene;
+      const material = new THREE.MeshBasicMaterial({ color: 0xffffff }); // 红色
+      model.traverse((item) => {
+        if (item instanceof THREE.Mesh) {
+          item.material = material;
+        }
+      });
       mixer = new THREE.AnimationMixer(model);
       const action = mixer.clipAction(gltf.animations[0]);
       action.play();
@@ -52,7 +58,6 @@ const ThreeAnimation = () => {
   };
 
   const render = () => {
-    requestAnimationFrame(render);
     if (mixer) {
       mixer.update(0.008);
     }

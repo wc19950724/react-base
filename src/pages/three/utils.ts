@@ -21,7 +21,6 @@ export class ThreeScene {
     );
     this.camera.position.set(0, -8, 0);
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0xdddddd);
 
     this.renderer = new THREE.WebGLRenderer({ antialias: true });
     this.renderer.setPixelRatio(window.devicePixelRatio);
