@@ -71,7 +71,7 @@ export default (
           ],
         },
         {
-          test: /\.(hdr|usdz)$/i,
+          test: /\.(hdr|usdz|gltf)$/i,
           use: {
             loader: "file-loader",
             options: {

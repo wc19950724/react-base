@@ -1,15 +1,13 @@
 import { debounce } from "lodash";
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
-import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader";
-import { USDZLoader } from "three/examples/jsm/loaders/USDZLoader";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
-import DamagedHelmet from "@/assets/DamagedHelmet.usdz";
-import royal_esplanade_1k from "@/assets/royal_esplanade_1k.hdr";
+import Pedestrians from "@/assets/行人.gltf";
 
 import { ThreeScene } from "./utils";
 
-const ThreeSceneComponent = () => {
+const ThreeAnimation = () => {
   const container = useRef<HTMLDivElement>(null);
   let threeScene: ThreeScene;
 
@@ -28,8 +26,9 @@ const ThreeSceneComponent = () => {
     if (container.current) {
       threeScene = new ThreeScene(container.current);
 
-      loadModel(royal_esplanade_1k, DamagedHelmet);
+      loadModel(Pedestrians);
       render();
+
       containerResize.observe(container.current);
 
       return () => {
@@ -39,22 +38,24 @@ const ThreeSceneComponent = () => {
     }
   }, []);
 
-  const loadModel = (hdrFile: string, usdzFile: string) => {
-    const textureLoader = new RGBELoader();
-    textureLoader.load(hdrFile, (texture) => {
-      texture.mapping = THREE.EquirectangularReflectionMapping;
-      threeScene.scene.background = texture;
-      threeScene.scene.environment = texture;
-
-      const loader = new USDZLoader();
-      loader.load(usdzFile, (usdz) => {
-        threeScene.scene.add(usdz);
-      });
+  let mixer: THREE.AnimationMixer;
+  const loadModel = (gltfFile: string) => {
+    const loader = new GLTFLoader();
+    loader.load(gltfFile, (gltf) => {
+      const model = gltf.scene;
+      mixer = new THREE.AnimationMixer(model);
+      const action = mixer.clipAction(gltf.animations[0]);
+      action.play();
+      threeScene.scene.clear();
+      threeScene.scene.add(model);
     });
   };
 
   const render = () => {
     requestAnimationFrame(render);
+    if (mixer) {
+      mixer.update(0.008);
+    }
     threeScene.stats.update();
     threeScene.renderer.render(threeScene.scene, threeScene.camera);
   };
@@ -64,4 +65,4 @@ const ThreeSceneComponent = () => {
   );
 };
 
-export default ThreeSceneComponent;
+export default ThreeAnimation;

@@ -1,7 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader";
-import { USDZLoader } from "three/examples/jsm/loaders/USDZLoader";
+import Stats from "three/examples/jsm/libs/stats.module";
 
 export class ThreeScene {
   container: HTMLDivElement;
@@ -9,6 +8,8 @@ export class ThreeScene {
   scene: THREE.Scene;
   renderer: THREE.WebGLRenderer;
   controls: OrbitControls;
+
+  stats: Stats;
 
   constructor(container: HTMLDivElement) {
     this.container = container;
@@ -18,8 +19,9 @@ export class ThreeScene {
       0.25,
       20,
     );
-    this.camera.position.set(-1.8, 0.6, 2.7);
+    this.camera.position.set(0, -8, 0);
     this.scene = new THREE.Scene();
+    this.scene.background = new THREE.Color(0xdddddd);
 
     this.renderer = new THREE.WebGLRenderer({ antialias: true });
     this.renderer.setPixelRatio(window.devicePixelRatio);
@@ -33,29 +35,14 @@ export class ThreeScene {
     this.controls.target.set(0, 0, -0.2);
 
     this.container.appendChild(this.renderer.domElement);
-  }
 
-  loadModel(hdrFile: string, usdzFile: string) {
-    const textureLoader = new RGBELoader();
-    textureLoader.load(hdrFile, (texture) => {
-      texture.mapping = THREE.EquirectangularReflectionMapping;
-      this.scene.background = texture;
-      this.scene.environment = texture;
-
-      const loader = new USDZLoader();
-      loader.load(usdzFile, (usdz) => {
-        this.scene.add(usdz);
-        this.render();
-      });
-    });
-  }
-
-  render() {
-    requestAnimationFrame(this.render.bind(this));
-    this.renderer.render(this.scene, this.camera);
+    this.stats = new Stats();
+    this.stats.dom.style.position = "absolute";
+    this.container.appendChild(this.stats.dom);
   }
 
   dispose() {
+    this.container.removeChild(this.stats.dom);
     this.container.removeChild(this.renderer.domElement);
   }
 }

@@ -87,6 +87,14 @@ export const routes: RouteMenu[] = [
           icon: <PieChartOutlined />,
         },
       },
+      {
+        path: "/three/animation",
+        Component: lazy(() => import("@/pages/three/animation")),
+        meta: {
+          title: "three-animation",
+          icon: <PieChartOutlined />,
+        },
+      },
     ],
   },
   {
