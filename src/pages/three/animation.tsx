@@ -3,9 +3,11 @@ import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
-import Pedestrians from "@/assets/行人.gltf";
+import Pedestrians from "@/assets/model/行人.gltf";
 
 import { ThreeScene } from "./utils";
+
+const loader = new GLTFLoader();
 
 const ThreeAnimation = () => {
   const container = useRef<HTMLDivElement>(null);
@@ -26,6 +28,7 @@ const ThreeAnimation = () => {
     if (container.current) {
       threeScene = new ThreeScene(container.current);
 
+      threeScene.axisUpdate();
       loadModel(Pedestrians);
       threeScene.renderer.setAnimationLoop(render);
 
@@ -40,29 +43,43 @@ const ThreeAnimation = () => {
 
   let mixer: THREE.AnimationMixer;
   const loadModel = (gltfFile: string) => {
-    const loader = new GLTFLoader();
     loader.load(gltfFile, (gltf) => {
       const model = gltf.scene;
-      const material = new THREE.MeshBasicMaterial({ color: 0xffffff }); // 红色
+
       model.traverse((item) => {
         if (item instanceof THREE.Mesh) {
-          item.material = material;
+          item.castShadow = true;
+          item.material = item.material.clone();
+          item.material.emissive = item.material.color;
         }
       });
-      mixer = new THREE.AnimationMixer(model);
-      const action = mixer.clipAction(gltf.animations[0]);
-      action.play();
-      threeScene.scene.clear();
+      console.log(gltf); // 打印模型以查看其结构，确保有材质信息
+
+      if (gltf.animations.length) {
+        mixer = new THREE.AnimationMixer(model);
+        gltf.animations.forEach((animate) => {
+          mixer.clipAction(animate).play();
+        });
+      }
+      // threeScene.scene.clear();
       threeScene.scene.add(model);
     });
   };
 
-  const render = () => {
+  let prevTime = 0;
+
+  const render = (time: number) => {
     if (mixer) {
-      mixer.update(0.008);
+      const dt = (time - prevTime) / 1000;
+      prevTime = time;
+      // const mixerUpdateDelta = threeScene.clock.getDelta();
+      mixer.update(dt);
     }
+    // threeScene.axis.position.copy(threeScene.camera.position);
+    // threeScene.axis.quaternion.copy(threeScene.camera.quaternion);
     threeScene.stats.update();
     threeScene.renderer.render(threeScene.scene, threeScene.camera);
+    threeScene.CSSRenderer.render(threeScene.scene, threeScene.camera);
   };
 
   return (

@@ -1,6 +1,6 @@
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { Drawer, Image, Layout as AntdLayout, theme } from "antd";
-import classnames from "classnames";
+import classNames from "classnames";
 import { useState } from "react";
 
 import LayoutMenu from "./LayoutMenu";
@@ -32,9 +32,9 @@ const LayoutHeader = (props: IProps) => {
           height={34}
           preview={false}
           src="https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg"
-          className={classnames(styles["logo"])}
+          className={classNames(styles["logo"])}
         />
-        <div className={classnames(styles["menu"])} onClick={changeOpen}>
+        <div className={classNames(styles["menu"])} onClick={changeOpen}>
           {open ? <MenuFoldOutlined /> : <MenuUnfoldOutlined />}
         </div>
         <Drawer
@@ -43,7 +43,7 @@ const LayoutHeader = (props: IProps) => {
           open={open}
           onClose={changeOpen}
           placement="left"
-          className={classnames(styles["header-drawer"])}
+          className={classNames(styles["header-drawer"])}
         >
           <LayoutMenu theme="light" />
         </Drawer>
@@ -56,7 +56,7 @@ const LayoutHeader = (props: IProps) => {
       style={{
         backgroundColor: props.isMobile ? LayoutToken?.colorBgHeader : "#fff",
       }}
-      className={classnames(
+      className={classNames(
         styles["layout-header"],
         props.isMobile && [styles["mobile"], "flex", "items-center"],
       )}

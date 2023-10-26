@@ -1,9 +1,13 @@
-import "./styles.less";
+import classNames from "classnames";
+
+import styles from "./styles.module.less";
 
 const Welcome = () => {
   return (
-    <div className="welcome-page">
-      <h1 className="welcome-heading">欢迎来到基于React + tsx的个人练习项目</h1>
+    <div className={classNames(styles["welcome-page"])}>
+      <h1 className={classNames(styles["welcome-heading"])}>
+        欢迎来到基于React + tsx的个人练习项目
+      </h1>
     </div>
   );
 };

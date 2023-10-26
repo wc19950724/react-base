@@ -1,4 +1,5 @@
 import { execSync } from "child_process";
+import CopyPlugin from "copy-webpack-plugin";
 import CssMinimizerPlugin from "css-minimizer-webpack-plugin";
 import fs from "fs";
 import HtmlWebpackPlugin from "html-webpack-plugin";
@@ -38,8 +39,6 @@ export default (
       chunkFilename: "js/[name].[contenthash].js",
       filename: "js/[name].[contenthash].js",
       assetModuleFilename: "[ext]/[name].[contenthash].[ext]",
-      path: path.resolve(__dirname, "docs"),
-      publicPath: mode === "production" ? "/react-base/" : "/",
     },
     performance: {
       hints: mode === "production" && "warning",
@@ -95,6 +94,14 @@ export default (
           filename: "css/[name].[contenthash].css",
           chunkFilename: "css/[name].[contenthash].css",
         }),
+      new CopyPlugin({
+        patterns: [
+          {
+            from: "src/assets",
+            to: "assets",
+          },
+        ],
+      }),
     ],
     devServer: {
       open: true,

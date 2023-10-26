@@ -4,8 +4,8 @@ import * as THREE from "three";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader";
 import { USDZLoader } from "three/examples/jsm/loaders/USDZLoader";
 
-import DamagedHelmet from "@/assets/DamagedHelmet.usdz";
-import royal_esplanade_1k from "@/assets/royal_esplanade_1k.hdr";
+import DamagedHelmet from "@/assets/model/DamagedHelmet.usdz";
+import royal_esplanade_1k from "@/assets/model/royal_esplanade_1k.hdr";
 
 import { ThreeScene } from "./utils";
 
