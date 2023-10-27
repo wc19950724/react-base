@@ -1,7 +1,11 @@
+import { message } from "antd";
 import { debounce } from "lodash";
+import { makeObservable, observable, runInAction } from "mobx";
 import * as THREE from "three";
+import { Object3D } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { Controller, GUI } from "three/examples/jsm/libs/lil-gui.module.min";
+import { GUI } from "three/examples/jsm/libs/lil-gui.module.min";
+import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 type Options = {
   resize?: boolean;
@@ -54,12 +58,7 @@ export class BaseScene {
     this.renderer.setSize(offsetWidth, offsetHeight);
   }
 
-  /**
-   * 渲染器渲染
-   * @param cb 需要额外执行的回调函数
-   */
-  render(cb?: () => void) {
-    cb?.();
+  render() {
     this.controls?.update();
     this.renderer?.render(this.scene, this.camera);
   }
@@ -68,8 +67,11 @@ export class BaseScene {
    * 动画帧渲染
    * @param {Function} cb 需要额外执行的回调函数
    */
-  rafRender(cb?: () => void) {
-    this.renderer?.setAnimationLoop(this.render.bind(this, cb));
+  rafRender(cb?: XRFrameRequestCallback) {
+    this.renderer?.setAnimationLoop((...arg) => {
+      cb?.(...arg);
+      this.render();
+    });
   }
 
   dispose() {
@@ -78,76 +80,205 @@ export class BaseScene {
   }
 }
 
-export class GltfScene extends BaseScene {
+export class GirdScene extends BaseScene {
   gui: GUI;
-  axes: THREE.AxesHelper;
+  panel: Panel;
+  ambientLight: THREE.AmbientLight; // 环境光
+  directionalLight: THREE.DirectionalLight; // 平行光
 
-  #axesColors: [THREE.Color, THREE.Color, THREE.Color];
+  model?: Object3D;
 
   constructor(container: HTMLDivElement, options?: Options) {
     super(container, options);
+    makeObservable(this, {
+      model: observable,
+    });
     this.gui = new GUI();
-    this.axes = new THREE.AxesHelper(5);
+    this.panel = new Panel(this.gui);
+    this.container.appendChild(this.gui.domElement);
+    this.ambientLight = new THREE.AmbientLight();
+    this.directionalLight = new THREE.DirectionalLight();
+    this.scene.add(this.ambientLight, this.directionalLight);
+    this.init();
+  }
+
+  init() {
+    // 相机位置
+    this.camera.position.set(0, 0.5, 1);
+    if (this.controls) {
+      this.controls.enableDamping = true;
+    }
+    this.addGUI();
+  }
+
+  addGUI() {
+    const panel = this.panel
+      .addUpload(this.updateModel.bind(this))
+      .addGrid()
+      .addAxes();
+    this.scene.add(panel.grid, panel.axes);
+  }
+
+  updateModel(gltf: GLTF) {
+    if (this.model) {
+      this.scene.remove(this.model);
+    }
+    runInAction(() => {
+      this.model = gltf.scene;
+      this.model.rotateX(-Math.PI / 2);
+      this.scene.add(this.model);
+      if (gltf.animations.length) {
+        const mixer = new THREE.AnimationMixer(this.model);
+        gltf.animations.forEach((item) => {
+          const action = mixer.clipAction(item);
+          action.play();
+        });
+
+        this.model.userData.mixer = mixer;
+      }
+    });
+  }
+
+  dispose() {
+    super.dispose();
+    this.container.removeChild(this.gui.domElement);
+  }
+}
+
+export class Panel {
+  gui: GUI;
+
+  grid: THREE.GridHelper;
+
+  axes: THREE.AxesHelper;
+  #axesColors: [THREE.Color, THREE.Color, THREE.Color];
+
+  constructor(gui: GUI) {
+    this.gui = gui;
+    this.gui.close();
+    this.gui.domElement.style.position = "absolute";
+
+    this.grid = new THREE.GridHelper();
+    this.axes = new THREE.AxesHelper();
     const xAxisColor = new THREE.Color(0xff0000);
     const yAxisColor = new THREE.Color(0x00ff00);
     const zAxisColor = new THREE.Color(0x0000ff);
     this.axes.setColors(xAxisColor, yAxisColor, zAxisColor);
 
     this.#axesColors = [xAxisColor, yAxisColor, zAxisColor];
-    this.init();
   }
 
-  init() {
-    const grid = new THREE.GridHelper(5, 10, 0x888888, 0x444444);
-    this.scene.add(grid, this.axes);
-    // 相机位置
-    this.camera.position.set(0, 0.5, 1);
-    this.addGUI();
+  addUpload(
+    onLoad: Parameters<GLTFLoader["load"]>[1],
+    onProgress?: Parameters<GLTFLoader["load"]>[2],
+    onError?: Parameters<GLTFLoader["load"]>[3],
+  ) {
+    const modelFile = new ModelFile();
+
+    const eventObj = {
+      upload: modelFile.upload.bind(modelFile),
+    };
+    this.gui.add(eventObj, "upload").name("上传gltf模型");
+    modelFile.load(onLoad, onProgress, onError);
+    return this;
   }
 
-  addGUI() {
-    const axesFolder = this.gui.addFolder("辅助线");
-    axesFolder
+  addGrid() {
+    this.gui.add(this.grid, "visible").name("网格");
+    return this;
+  }
+
+  addAxes() {
+    this.gui
       .add(this.axes, "visible")
-      .name("显示")
+      .name("坐标轴")
       .onChange((val) => {
-        axesFolder.children.forEach((item) => {
-          if (item instanceof Controller && item.property !== "visible") {
-            item.disable(!val);
-          }
-        });
+        val ? axesFolder.show() : axesFolder.hide();
+      });
+    const axesFolder = this.gui.addFolder("坐标轴").show(this.axes.visible);
+    const axes = {
+      length: 1,
+    };
+    axesFolder
+      .add(axes, "length", 0, 100, 1)
+      .name("长度")
+      .onChange(() => {
+        this.axes.scale.set(axes.length, axes.length, axes.length);
       });
     axesFolder
       .addColor(this.#axesColors, "0")
-      .disable(!this.axes.visible)
       .name("X")
       .onChange(() => {
         this.axes.setColors(...this.#axesColors);
       });
     axesFolder
       .addColor(this.#axesColors, "1")
-      .disable(!this.axes.visible)
       .name("Y")
       .onChange(() => {
         this.axes.setColors(...this.#axesColors);
       });
     axesFolder
       .addColor(this.#axesColors, "2")
-      .disable(!this.axes.visible)
       .name("Z")
       .onChange(() => {
         this.axes.setColors(...this.#axesColors);
       });
+    return this;
+  }
+}
 
-    // this.gui.addFolder("位置");
-    // this.gui.addFolder("缩放");
-    // this.gui.addFolder("旋转");
-    this.gui.domElement.style.position = "absolute";
-    this.container.appendChild(this.gui.domElement);
+export class ModelFile {
+  input: HTMLInputElement;
+
+  onLoad: Parameters<GLTFLoader["load"]>[1];
+  onProgress?: Parameters<GLTFLoader["load"]>[2];
+  onError?: Parameters<GLTFLoader["load"]>[3];
+
+  constructor() {
+    this.input = document.createElement("input");
+    this.input.type = "file";
+    this.input.accept = ".gltf";
+    this.onLoad = () => {};
+  }
+
+  load(
+    onLoad: typeof this.onLoad,
+    onProgress?: typeof this.onProgress,
+    onError?: typeof this.onError,
+  ) {
+    this.onLoad = onLoad;
+    this.onProgress = onProgress;
+    this.onError = onError;
+  }
+
+  upload() {
+    this.input.addEventListener("change", this.change.bind(this));
+    this.input.click();
+  }
+
+  async change() {
+    const { files } = this.input;
+    if (!files) {
+      return message.warning("请选择文件");
+    }
+    if (!files[0].name.endsWith(".gltf")) {
+      return message.warning("请选择.gltf文件");
+    }
+    const loader = new GLTFLoader();
+    try {
+      const data = await loader.loadAsync(
+        URL.createObjectURL(files[0]),
+        this.onProgress?.bind(this),
+      );
+      this.onLoad(data);
+    } catch (error) {
+      this.onError?.(error);
+    } finally {
+      this.dispose();
+    }
   }
 
   dispose() {
-    super.dispose();
-    this.container.removeChild(this.gui.domElement);
+    this.input.removeEventListener("change", this.change.bind(this));
   }
 }

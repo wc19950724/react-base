@@ -77,13 +77,13 @@ export const routes: RouteMenu[] = [
     children: [
       {
         path: "/three",
-        element: <Navigate to="/three/gltf" />,
+        element: <Navigate to="/three/grid" />,
       },
       {
-        path: "/three/gltf",
-        Component: lazy(() => import("@/pages/three/gltf")),
+        path: "/three/grid",
+        Component: lazy(() => import("@/pages/three/grid")),
         meta: {
-          title: "three-gltf",
+          title: "three-grid",
           icon: <PieChartOutlined />,
         },
       },
