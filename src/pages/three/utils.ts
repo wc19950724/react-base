@@ -1,6 +1,6 @@
 import { message } from "antd";
 import { debounce } from "lodash";
-import { makeObservable, observable, runInAction } from "mobx";
+import { action, makeObservable, observable } from "mobx";
 import * as THREE from "three";
 import { Object3D } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
@@ -80,6 +80,11 @@ export class BaseScene {
   }
 }
 
+export interface ModelData {
+  mixer: THREE.AnimationMixer;
+  actions: THREE.AnimationAction[];
+}
+
 export class GirdScene extends BaseScene {
   gui: GUI;
   panel: Panel;
@@ -92,6 +97,7 @@ export class GirdScene extends BaseScene {
     super(container, options);
     makeObservable(this, {
       model: observable,
+      updateModel: action,
     });
     this.gui = new GUI();
     this.panel = new Panel(this.gui);
@@ -123,20 +129,29 @@ export class GirdScene extends BaseScene {
     if (this.model) {
       this.scene.remove(this.model);
     }
-    runInAction(() => {
-      this.model = gltf.scene;
-      this.model.rotateX(-Math.PI / 2);
-      this.scene.add(this.model);
-      if (gltf.animations.length) {
-        const mixer = new THREE.AnimationMixer(this.model);
-        gltf.animations.forEach((item) => {
-          const action = mixer.clipAction(item);
-          action.play();
-        });
+    this.model = gltf.scene;
+    this.model.rotateX(-Math.PI / 2);
+    this.scene.add(this.model);
+    if (gltf.animations.length) {
+      const mixer = new THREE.AnimationMixer(this.model);
+      const actions: THREE.AnimationAction[] = [];
+      gltf.animations.forEach((item) => {
+        const action = mixer.clipAction(item);
+        actions.push(action);
+      });
+      this.model.userData.actions = actions;
+      this.model.userData.mixer = mixer;
+    }
+  }
 
-        this.model.userData.mixer = mixer;
-      }
-    });
+  updateAnimation(play?: boolean) {
+    if (!this.model) return;
+    const { actions } = this.model.userData as ModelData;
+    if (play) {
+      actions.forEach((item) => item.play());
+    } else {
+      actions.forEach((item) => item.stop());
+    }
   }
 
   dispose() {

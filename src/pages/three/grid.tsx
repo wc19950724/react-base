@@ -1,14 +1,15 @@
 import { observer } from "mobx-react-lite";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import GUI from "three/examples/jsm/libs/lil-gui.module.min";
 
-import { GirdScene } from "./utils";
+import { GirdScene, ModelData } from "./utils";
 
 const Component = observer(() => {
   const container = useRef<HTMLDivElement>(null);
-  const grid = useRef<GirdScene>();
+  const [grid, setGrid] = useState<GirdScene>();
 
   const animateConfig = useRef({
+    play: false,
     speed: 0.6,
   });
 
@@ -16,24 +17,24 @@ const Component = observer(() => {
 
   useEffect(() => {
     if (container.current) {
-      grid.current = new GirdScene(container.current);
+      const gridScene = new GirdScene(container.current);
+      setGrid(gridScene);
 
       let lastTime = 0;
-      grid.current.rafRender((time) => {
-        if (!grid.current?.model?.userData.mixer) {
+      gridScene.rafRender((time) => {
+        const userData = gridScene.model?.userData as ModelData;
+        if (!userData?.mixer) {
           lastTime = 0;
           return;
         }
         const dl = (time - lastTime) / 1000;
-        grid.current.model.userData.mixer.update(
-          dl * animateConfig.current.speed,
-        );
+        userData.mixer.update(dl * animateConfig.current.speed);
 
         lastTime = time;
       });
 
       return () => {
-        grid.current?.dispose();
+        gridScene.dispose();
       };
     }
   }, []);
@@ -42,13 +43,20 @@ const Component = observer(() => {
     if (animatePanel.current) {
       animatePanel.current.destroy();
     }
-    if (grid.current?.model?.userData.mixer) {
-      animatePanel.current = grid.current.gui.addFolder("动画");
+    if (!grid?.model) return;
+    const userData = grid.model.userData as ModelData;
+    if (userData.mixer) {
+      grid.updateAnimation(animateConfig.current.play);
+      animatePanel.current = grid.gui.addFolder("动画");
+      animatePanel.current
+        .add(animateConfig.current, "play")
+        .name("播放")
+        .onChange(grid.updateAnimation.bind(grid));
       animatePanel.current
         .add(animateConfig.current, "speed", 0, 2, 0.01)
         .name("速度");
     }
-  }, [grid.current?.model?.userData.mixer]);
+  }, [grid?.model?.userData.mixer]);
 
   return (
     <div ref={container} className="all-full relative overflow-hidden"></div>

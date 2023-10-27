@@ -27,6 +27,10 @@ if (fs.existsSync(".git")) {
   }
 }
 
+const buildTime = new Date().toLocaleString("zh-CN", {
+  hour12: false,
+});
+
 export default (
   env: WebpackEnv,
   { mode }: WebpackParams,
@@ -86,6 +90,7 @@ export default (
       }),
       new EnvironmentPlugin({
         __COMMITID__: commitId,
+        __BUILDTIME__: buildTime,
         __PKGNAME__: process.env.npm_package_name,
         __PKGVERSION__: process.env.npm_package_version,
       }),
