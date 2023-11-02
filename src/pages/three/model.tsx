@@ -104,7 +104,10 @@ const Component = observer(() => {
 
   return (
     <div ref={container} className="all-full overflow-hidden relative">
-      <div ref={modelBox} className={classNames(styles["model-box"])}>
+      <div
+        ref={modelBox}
+        className={(classNames(styles["model-box"]), "flex", "flex-col")}
+      >
         <div
           className={classNames(styles["resize-line"])}
           onTouchStart={onTouchStart}
