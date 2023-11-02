@@ -14,9 +14,9 @@ const Layout: FC<{ children: ReactNode }> = ({ children }) => {
     return () => disconnect();
   }, []);
 
-  const PCLayout = () => (
+  return (
     <AntdLayout hasSider className="h-full">
-      <LayoutSider />
+      {isMobile ? "" : <LayoutSider />}
       <AntdLayout>
         <LayoutHeader isMobile={isMobile} />
         <AntdLayout.Content className="overflow-auto">
@@ -25,17 +25,6 @@ const Layout: FC<{ children: ReactNode }> = ({ children }) => {
       </AntdLayout>
     </AntdLayout>
   );
-
-  const MobileLayout = () => (
-    <AntdLayout className="h-full">
-      <LayoutHeader isMobile={isMobile} />
-      <AntdLayout.Content className="overflow-auto">
-        <PageLoading>{children}</PageLoading>
-      </AntdLayout.Content>
-    </AntdLayout>
-  );
-
-  return isMobile ? <MobileLayout /> : <PCLayout />;
 };
 
 export default Layout;

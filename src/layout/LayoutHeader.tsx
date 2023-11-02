@@ -2,6 +2,7 @@ import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { Drawer, Image, Layout as AntdLayout, theme } from "antd";
 import classNames from "classnames";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import LayoutMenu from "./LayoutMenu";
 import styles from "./styles.module.less";
@@ -14,18 +15,23 @@ const LayoutHeader = (props: IProps) => {
   const {
     token: { Layout: LayoutToken },
   } = theme.useToken();
+  const navigate = useNavigate();
+
+  const goHome = () => {
+    navigate("/");
+  };
+
+  const [open, setOpen] = useState(false);
+
+  const changeOpen = () => {
+    setOpen(!open);
+  };
 
   const PCHeader = () => {
     return "Header";
   };
 
   const mobileHeader = () => {
-    const [open, setOpen] = useState(false);
-
-    const changeOpen = () => {
-      setOpen(!open);
-    };
-
     return (
       <>
         <Image
@@ -33,6 +39,7 @@ const LayoutHeader = (props: IProps) => {
           preview={false}
           src="https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg"
           className={classNames(styles["logo"])}
+          onClick={goHome}
         />
         <div className={classNames(styles["menu"])} onClick={changeOpen}>
           {open ? <MenuFoldOutlined /> : <MenuUnfoldOutlined />}
@@ -58,7 +65,12 @@ const LayoutHeader = (props: IProps) => {
       }}
       className={classNames(
         styles["layout-header"],
-        props.isMobile && [styles["mobile"], "flex", "items-center"],
+        props.isMobile && [
+          styles["mobile"],
+          "flex",
+          "items-center",
+          "justify-between",
+        ],
       )}
     >
       {props.isMobile ? mobileHeader() : PCHeader()}
