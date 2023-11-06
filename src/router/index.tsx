@@ -19,6 +19,27 @@ export const routes: RouteMenu[] = [
     },
   },
   {
+    path: "/utils",
+    meta: {
+      title: "Utils",
+      icon: <PieChartOutlined />,
+    },
+    children: [
+      {
+        path: "/utils",
+        element: <Navigate to="/utils/resize" />,
+      },
+      {
+        path: "/utils/resize",
+        Component: lazy(() => import("@/pages/utils/resize")),
+        meta: {
+          title: "resize",
+          icon: <PieChartOutlined />,
+        },
+      },
+    ],
+  },
+  {
     path: "/fabric",
     meta: {
       title: "Fabric.js渲染优化",
