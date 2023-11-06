@@ -4,7 +4,7 @@ export const getRandomInt = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min)) + min;
 };
 
-export const getElement = (el?: string | HTMLElement) => {
+export const getElement = (el: string | HTMLElement) => {
   if (typeof el === "string") {
     return document.querySelector<HTMLElement>(el);
   }
@@ -56,7 +56,7 @@ export const getWithinRangeNumber = (
   return Math.min(Math.max(num, min), max);
 };
 
-export const getElementMinMaxSize = (el?: string | HTMLElement) => {
+export const getElementMinMaxSize = (el: string | HTMLElement) => {
   const dom = getElement(el);
   if (!dom)
     return {

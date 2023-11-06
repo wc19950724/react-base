@@ -1,16 +1,19 @@
 import { Layout as AntdLayout } from "antd";
-import { FC, ReactNode, useEffect } from "react";
+import { FC, ReactNode, useEffect, useState } from "react";
 
 import PageLoading from "@/components/PageLoading";
-import { useScreenSize } from "@/hooks/useScreenSize";
+import { useMobileDetect } from "@/hooks/useMobileDetect";
 
 import LayoutHeader from "./LayoutHeader";
 import LayoutSider from "./LayoutSider";
 
 const Layout: FC<{ children: ReactNode }> = ({ children }) => {
-  const { isMobile, observe, disconnect } = useScreenSize(768);
+  const { observe, disconnect } = useMobileDetect();
+  const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
-    observe();
+    observe((bool) => {
+      setIsMobile(bool);
+    });
     return () => disconnect();
   }, []);
 
