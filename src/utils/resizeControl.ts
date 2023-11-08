@@ -232,6 +232,7 @@ export class CreateResizes {
 
   start(event: MouseEvent | TouchEvent) {
     if (!this.currentDom || !this.el) return;
+    event.preventDefault();
     this.userSelect = document.body.style.userSelect;
     document.body.style.userSelect = "none";
     this.direction = this.controlMap.get(this.currentDom);
@@ -259,6 +260,7 @@ export class CreateResizes {
 
   move(event: MouseEvent | TouchEvent) {
     if (!this.startRect) return;
+    event.preventDefault();
     switch (this.direction) {
       case "left":
         this.moveLeft(event);
