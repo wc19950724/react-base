@@ -2,10 +2,15 @@ import { observer } from "mobx-react-lite";
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 
+import { ResizeControl } from "@/utils/resizeControl";
+
 import { renderer } from "./utils";
 
 const Component = observer(() => {
   const container = useRef<HTMLDivElement>(null);
+  const operation = useRef<HTMLDivElement>(null);
+
+  const resizeble = new ResizeControl();
 
   useEffect(() => {
     if (container.current) {
@@ -35,12 +40,23 @@ const Component = observer(() => {
       // 将地面添加到场景中
       renderer.scene.add(plane);
     }
+    if (operation.current) {
+      resizeble.add(operation.current, "right");
+    }
     return () => {
       renderer.dispose();
+      resizeble.dispose();
     };
   }, []);
 
-  return <div ref={container} className="all-full"></div>;
+  return (
+    <div className="all-full flex overflow-hidden">
+      <div ref={operation} style={{ flexShrink: 0 }}>
+        操作栏
+      </div>
+      <div ref={container} className="flex-1"></div>
+    </div>
+  );
 });
 
 export default Component;

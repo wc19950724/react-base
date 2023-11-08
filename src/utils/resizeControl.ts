@@ -366,6 +366,7 @@ export class ResizeControl {
   add(dom: string | HTMLElement, direction: Direction = "all") {
     const el = getElement(dom);
     if (!el) throw `${dom}: the element is not found`;
+    el.style.position = "relative";
     this.controlMap.set(el, direction);
     this.register();
   }
