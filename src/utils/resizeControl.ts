@@ -5,30 +5,19 @@ import { getElement } from "./utils";
 type SingleDirection = "top" | "right" | "bottom" | "left";
 type MultipleDirection = "leftTop" | "rightTop" | "rightBottom" | "leftBottom";
 
-interface ElementSize {
-  width?: number;
-  height?: number;
-}
+type Direction =
+  | SingleDirection
+  | MultipleDirection
+  | Array<SingleDirection>
+  | "all";
 
-/** 单一方向 */
-interface SingleDirectionOptions {
-  direction: SingleDirection;
-  min?: number;
-  max?: number;
-}
-
-/** 多个方向 */
-interface MultipleDirectionOptions {
-  direction: MultipleDirection | Array<SingleDirection> | "all";
-  min?: ElementSize;
-  max?: ElementSize;
-}
-
-type AddOptions = SingleDirectionOptions | MultipleDirectionOptions;
-
-interface ResizePoint {
+interface ResizeRect {
   x: number;
   y: number;
+  width: number;
+  height: number;
+  left: number;
+  top: number;
 }
 
 export class CreateControls {
@@ -42,7 +31,7 @@ export class CreateControls {
     this.controlElements = {};
   }
 
-  render(direction: AddOptions["direction"]) {
+  render(direction: Direction) {
     if (direction === "all") {
       const directions: Array<SingleDirection | MultipleDirection> = [
         "top",
@@ -68,7 +57,7 @@ export class CreateControls {
 
   getController(direction: SingleDirection | MultipleDirection) {
     const controller_size = 20;
-    const div_size = 4;
+    const border_size = 4;
     const controller = document.createElement("div");
     controller.classList.add("controller");
     controller.style.position = "absolute";
@@ -76,49 +65,67 @@ export class CreateControls {
     controller.style.alignItems = "center";
     controller.style.justifyContent = "center";
     const controller_child = document.createElement("div");
+    controller_child.style.transition = "all 0.2s";
+    switch (direction) {
+      case "left":
+      case "right":
+        controller.style[direction] = `-${controller_size / 2}px`;
+        controller.style.top = "0";
+        controller.style.height = "100%";
+        controller.style.width = `${controller_size}px`;
+        controller_child.style.height = "100%";
+        controller_child.style.width = `${border_size}px`;
+        break;
+      case "top":
+      case "bottom":
+        controller.style[direction] = `-${controller_size / 2}px`;
+        controller.style.left = "0";
+        controller.style.width = "100%";
+        controller.style.height = `${controller_size}px`;
+        controller_child.style.width = "100%";
+        controller_child.style.height = `${border_size}px`;
+        break;
+      case "leftTop":
+      case "rightTop":
+        if (direction === "leftTop") {
+          controller.style.left = `-${border_size / 2}px`;
+          controller.style.alignItems = "flex-end";
+          controller.style.justifyContent = "flex-end";
+          controller_child.style.borderLeft = `${border_size}px solid transparent`;
+        } else {
+          controller.style.right = `-${border_size / 2}px`;
+          controller.style.alignItems = "flex-end";
+          controller.style.justifyContent = "flex-start";
+          controller_child.style.borderRight = `${border_size}px solid transparent`;
+        }
+        controller.style.top = `-${border_size / 2}px`;
+        controller.style.width = `${controller_size}px`;
+        controller.style.height = `${controller_size}px`;
+        controller_child.style.width = `${controller_size}px`;
+        controller_child.style.height = `${controller_size}px`;
+        controller_child.style.borderTop = `${border_size}px solid transparent`;
 
-    if (direction === "left" || direction === "right") {
-      controller.style.top = "0";
-      controller.style.height = "100%";
-      controller.style.width = `${controller_size}px`;
-      controller_child.style.height = "100%";
-      controller_child.style.width = `${div_size}px`;
-    } else if (direction === "top" || direction === "bottom") {
-      controller.style.left = "0";
-      controller.style.width = "100%";
-      controller.style.height = `${controller_size}px`;
-      controller_child.style.width = "100%";
-      controller_child.style.height = `${div_size}px`;
-    } else if (direction === "leftTop" || direction === "rightTop") {
-      controller.style.top = `-${controller_size / 2}px`;
-      controller.style.width = `${controller_size}px`;
-      controller.style.height = `${controller_size}px`;
-      controller_child.style.width = `${div_size}px`;
-      controller_child.style.height = `${div_size}px`;
-    } else if (direction === "leftBottom" || direction === "rightBottom") {
-      controller.style.bottom = `-${controller_size / 2}px`;
-      controller.style.width = `${controller_size}px`;
-      controller.style.height = `${controller_size}px`;
-      controller_child.style.width = `${div_size}px`;
-      controller_child.style.height = `${div_size}px`;
-    }
-
-    if (
-      direction === "left" ||
-      direction === "leftTop" ||
-      direction === "leftBottom"
-    ) {
-      controller.style.left = `-${controller_size / 2}px`;
-    } else if (
-      direction === "right" ||
-      direction === "rightTop" ||
-      direction === "rightBottom"
-    ) {
-      controller.style.right = `-${controller_size / 2}px`;
-    } else if (direction === "top") {
-      controller.style.top = `-${controller_size / 2}px`;
-    } else if (direction === "bottom") {
-      controller.style.bottom = `-${controller_size / 2}px`;
+        break;
+      case "leftBottom":
+      case "rightBottom":
+        if (direction === "leftBottom") {
+          controller.style.left = `-${border_size / 2}px`;
+          controller.style.alignItems = "flex-start";
+          controller.style.justifyContent = "flex-end";
+          controller_child.style.borderLeft = `${border_size}px solid transparent`;
+        } else {
+          controller.style.right = `-${border_size / 2}px`;
+          controller.style.alignItems = "flex-start";
+          controller.style.justifyContent = "flex-start";
+          controller_child.style.borderRight = `${border_size}px solid transparent`;
+        }
+        controller.style.bottom = `-${border_size / 2}px`;
+        controller.style.width = `${controller_size}px`;
+        controller.style.height = `${controller_size}px`;
+        controller_child.style.width = `${controller_size}px`;
+        controller_child.style.height = `${controller_size}px`;
+        controller_child.style.borderBottom = `${border_size}px solid transparent`;
+        break;
     }
 
     controller.onmouseenter = () => {
@@ -130,6 +137,8 @@ export class CreateControls {
         direction === "bottom"
       ) {
         controller_child.style.backgroundColor = "blue";
+      } else {
+        controller_child.style.borderColor = "blue";
       }
     };
 
@@ -141,7 +150,9 @@ export class CreateControls {
         direction === "right" ||
         direction === "bottom"
       ) {
-        controller_child.style.backgroundColor = "unset";
+        controller_child.style.backgroundColor = "transparent";
+      } else {
+        controller_child.style.borderColor = "transparent";
       }
     };
 
@@ -181,77 +192,204 @@ export class CreateControls {
     for (dir in this.controlElements) {
       this.controlElements[dir]?.remove();
     }
+    this.controlElements = {};
   }
 }
 
 export class CreateResizes {
-  startPoint: ResizePoint;
+  el: HTMLElement | null;
+  startRect: ResizeRect | null;
+  direction?: SingleDirection | MultipleDirection;
+  private controlMap: Map<HTMLElement, SingleDirection | MultipleDirection> =
+    new Map();
 
-  private moving: (ev: MouseEvent | TouchEvent) => void;
+  userSelect = document.body.style.userSelect;
+  currentDom?: HTMLElement;
+
   constructor() {
-    this.startPoint = { x: 0, y: 0 };
-    this.moving = (ev: MouseEvent | TouchEvent) => {
-      if (ev instanceof MouseEvent) {
-        this.resizing({ x: ev.pageX, y: ev.pageY });
-      } else {
-        this.resizing({ x: ev.touches[0].pageX, y: ev.touches[0].pageX });
-      }
+    this.el = null;
+    this.startRect = null;
+    this.start = this.start.bind(this);
+    this.move = this.move.bind(this);
+    this.end = this.end.bind(this);
+  }
+
+  add(
+    el: HTMLElement,
+    controlDom: HTMLElement,
+    direction: SingleDirection | MultipleDirection,
+  ) {
+    this.el = el;
+
+    this.controlMap.set(controlDom, direction);
+    const ready = (event: MouseEvent | TouchEvent) => {
+      this.currentDom = controlDom;
+      this.start(event);
     };
+    controlDom.onmousedown = ready;
+    controlDom.ontouchstart = ready;
   }
 
-  start(point: ResizePoint) {
-    this.startPoint = { ...point };
-
-    document.addEventListener("mousemove", this.moving);
-    document.addEventListener("mouseup", this.end);
-
-    document.addEventListener("touchmove", this.moving);
-    document.addEventListener("touchend", this.end);
+  start(event: MouseEvent | TouchEvent) {
+    if (!this.currentDom || !this.el) return;
+    this.userSelect = document.body.style.userSelect;
+    document.body.style.userSelect = "none";
+    this.direction = this.controlMap.get(this.currentDom);
+    const { width, height, left, top } = this.el.getBoundingClientRect();
+    this.startRect = merge({}, this.startRect, { width, height, left, top });
+    if (event instanceof MouseEvent) {
+      merge(this.startRect, {
+        x: event.pageX,
+        y: event.pageY,
+      });
+      document.addEventListener("mousemove", this.move);
+      document.addEventListener("mouseup", this.end);
+    } else {
+      merge(this.startRect, {
+        x: event.touches[0].pageX,
+        y: event.touches[0].pageY,
+      });
+      document.addEventListener("touchmove", this.move, {
+        passive: false,
+      });
+      document.addEventListener("touchend", this.end);
+      document.addEventListener("touchcancel", this.end);
+    }
   }
 
-  resizing(point: ResizePoint) {
-    console.log(point);
+  move(event: MouseEvent | TouchEvent) {
+    if (!this.startRect) return;
+    switch (this.direction) {
+      case "left":
+        this.moveLeft(event);
+        break;
+      case "right":
+        this.moveRight(event);
+        break;
+      case "top":
+        this.moveTop(event);
+        break;
+      case "bottom":
+        this.moveBottom(event);
+        break;
+      case "leftTop":
+        this.moveLeft(event);
+        this.moveTop(event);
+        break;
+      case "rightTop":
+        this.moveRight(event);
+        this.moveTop(event);
+        break;
+      case "leftBottom":
+        this.moveLeft(event);
+        this.moveBottom(event);
+        break;
+      case "rightBottom":
+        this.moveRight(event);
+        this.moveBottom(event);
+        break;
+    }
+  }
+
+  moveLeft(event: MouseEvent | TouchEvent) {
+    if (!this.el || !this.startRect) return;
+
+    const currentX =
+      event instanceof MouseEvent ? event.pageX : event.touches[0].pageX;
+    const diffX = this.startRect.x - currentX;
+
+    this.el.style.width = this.startRect.width + diffX + "px";
+  }
+
+  moveRight(event: MouseEvent | TouchEvent) {
+    if (!this.el || !this.startRect) return;
+
+    const currentX =
+      event instanceof MouseEvent ? event.pageX : event.touches[0].pageX;
+    const diffX = currentX - this.startRect.x;
+
+    this.el.style.width = this.startRect.width + diffX + "px";
+  }
+
+  moveTop(event: MouseEvent | TouchEvent) {
+    if (!this.el || !this.startRect) return;
+
+    const currentY =
+      event instanceof MouseEvent ? event.pageY : event.touches[0].pageY;
+    const diffY = this.startRect.y - currentY;
+
+    this.el.style.height = this.startRect.height + diffY + "px";
+  }
+
+  moveBottom(event: MouseEvent | TouchEvent) {
+    if (!this.el || !this.startRect) return;
+
+    const currentY =
+      event instanceof MouseEvent ? event.pageY : event.touches[0].pageY;
+    const diffY = currentY - this.startRect.y;
+
+    this.el.style.height = this.startRect.height + diffY + "px";
   }
 
   end() {
-    document.removeEventListener("mousemove", this.moving);
-    document.removeEventListener("mouseup", this.end);
+    console.log("end");
+    document.body.style.userSelect = this.userSelect;
 
-    document.removeEventListener("touchmove", this.moving);
+    this.startRect = null;
+    document.removeEventListener("mousemove", this.move);
+    document.removeEventListener("mouseup", this.end);
+    document.removeEventListener("touchmove", this.move);
     document.removeEventListener("touchend", this.end);
+    document.removeEventListener("touchcancel", this.end);
+  }
+
+  dispose() {
+    this.controlMap.clear();
+    this.end();
   }
 }
 
 export class ResizeControl {
-  private options: Map<HTMLElement, AddOptions> = new Map();
+  private controlMap: Map<HTMLElement, Direction> = new Map();
 
-  private controls?: CreateControls;
+  private controls: CreateControls;
 
-  add(dom: string | HTMLElement, options?: AddOptions) {
+  private resizeEvents: CreateResizes;
+
+  constructor() {
+    this.controls = new CreateControls();
+    this.resizeEvents = new CreateResizes();
+  }
+
+  add(dom: string | HTMLElement, direction: Direction = "all") {
     const el = getElement(dom);
     if (!el) throw `${dom}: the element is not found`;
-    const defaultOptions = {
-      direction: "all",
-      min: { width: 0, height: 0 },
-      max: { width: Infinity, height: Infinity },
-    };
-    options = merge(defaultOptions, options);
-    this.options.set(el, options);
-    const controls = new CreateControls();
-    controls.render(options.direction);
-    let dir: keyof typeof controls.controlElements;
-    for (dir in controls.controlElements) {
-      const controller = controls.controlElements[dir];
-      if (controller) {
-        el.appendChild(controller);
+    this.controlMap.set(el, direction);
+    this.register();
+  }
+
+  // 注册器
+  private register() {
+    const entries = [...this.controlMap.entries()];
+    entries.forEach(([el, direction]) => {
+      this.controls.render(direction);
+      const { controlElements } = this.controls;
+      let dir: keyof typeof controlElements;
+      for (dir in controlElements) {
+        const direction = dir;
+        const controller = controlElements[direction];
+        if (controller) {
+          // 注册事件
+          this.resizeEvents.add(el, controller, direction);
+          el.appendChild(controller);
+        }
       }
-    }
+    });
   }
 
   dispose() {
-    this.options.clear();
-    if (this.controls) {
-      this.controls.dispose();
-    }
+    this.controlMap.clear();
+    this.controls.dispose();
+    this.resizeEvents.dispose();
   }
 }
