@@ -54,7 +54,7 @@ const Component = observer(() => {
       <div ref={operation} style={{ flexShrink: 0 }}>
         操作栏
       </div>
-      <div ref={container} className="flex-1"></div>
+      <div ref={container} className="flex-1" style={{ width: 0 }}></div>
     </div>
   );
 });

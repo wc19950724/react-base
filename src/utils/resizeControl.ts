@@ -21,7 +21,7 @@ interface ResizeRect {
 }
 
 export class CreateControls {
-  cursor: string;
+  private cursor: string;
   controlElements: Partial<
     Record<SingleDirection | MultipleDirection, HTMLElement>
   >;
@@ -55,17 +55,11 @@ export class CreateControls {
     }
   }
 
-  getController(direction: SingleDirection | MultipleDirection) {
+  private getController(direction: SingleDirection | MultipleDirection) {
     const controller_size = 20;
-    const border_size = 4;
     const controller = document.createElement("div");
     controller.classList.add("controller");
     controller.style.position = "absolute";
-    controller.style.display = "flex";
-    controller.style.alignItems = "center";
-    controller.style.justifyContent = "center";
-    const controller_child = document.createElement("div");
-    controller_child.style.transition = "all 0.2s";
     switch (direction) {
       case "left":
       case "right":
@@ -73,8 +67,6 @@ export class CreateControls {
         controller.style.top = "0";
         controller.style.height = "100%";
         controller.style.width = `${controller_size}px`;
-        controller_child.style.height = "100%";
-        controller_child.style.width = `${border_size}px`;
         break;
       case "top":
       case "bottom":
@@ -82,86 +74,43 @@ export class CreateControls {
         controller.style.left = "0";
         controller.style.width = "100%";
         controller.style.height = `${controller_size}px`;
-        controller_child.style.width = "100%";
-        controller_child.style.height = `${border_size}px`;
         break;
       case "leftTop":
       case "rightTop":
         if (direction === "leftTop") {
-          controller.style.left = `-${border_size / 2}px`;
-          controller.style.alignItems = "flex-end";
-          controller.style.justifyContent = "flex-end";
-          controller_child.style.borderLeft = `${border_size}px solid transparent`;
+          controller.style.left = `-${controller_size / 2}px`;
         } else {
-          controller.style.right = `-${border_size / 2}px`;
-          controller.style.alignItems = "flex-end";
-          controller.style.justifyContent = "flex-start";
-          controller_child.style.borderRight = `${border_size}px solid transparent`;
+          controller.style.right = `-${controller_size / 2}px`;
         }
-        controller.style.top = `-${border_size / 2}px`;
+        controller.style.top = `-${controller_size / 2}px`;
         controller.style.width = `${controller_size}px`;
         controller.style.height = `${controller_size}px`;
-        controller_child.style.width = `${controller_size}px`;
-        controller_child.style.height = `${controller_size}px`;
-        controller_child.style.borderTop = `${border_size}px solid transparent`;
-
         break;
       case "leftBottom":
       case "rightBottom":
         if (direction === "leftBottom") {
-          controller.style.left = `-${border_size / 2}px`;
-          controller.style.alignItems = "flex-start";
-          controller.style.justifyContent = "flex-end";
-          controller_child.style.borderLeft = `${border_size}px solid transparent`;
+          controller.style.left = `-${controller_size / 2}px`;
         } else {
-          controller.style.right = `-${border_size / 2}px`;
-          controller.style.alignItems = "flex-start";
-          controller.style.justifyContent = "flex-start";
-          controller_child.style.borderRight = `${border_size}px solid transparent`;
+          controller.style.right = `-${controller_size / 2}px`;
         }
-        controller.style.bottom = `-${border_size / 2}px`;
+        controller.style.bottom = `-${controller_size / 2}px`;
         controller.style.width = `${controller_size}px`;
         controller.style.height = `${controller_size}px`;
-        controller_child.style.width = `${controller_size}px`;
-        controller_child.style.height = `${controller_size}px`;
-        controller_child.style.borderBottom = `${border_size}px solid transparent`;
         break;
     }
 
     controller.onmouseenter = () => {
       document.body.style.cursor = this.getCursorForDirection(direction);
-      if (
-        direction === "left" ||
-        direction === "top" ||
-        direction === "right" ||
-        direction === "bottom"
-      ) {
-        controller_child.style.backgroundColor = "blue";
-      } else {
-        controller_child.style.borderColor = "blue";
-      }
     };
 
     controller.onmouseleave = () => {
       document.body.style.cursor = this.cursor;
-      if (
-        direction === "left" ||
-        direction === "top" ||
-        direction === "right" ||
-        direction === "bottom"
-      ) {
-        controller_child.style.backgroundColor = "transparent";
-      } else {
-        controller_child.style.borderColor = "transparent";
-      }
     };
-
-    controller.appendChild(controller_child);
 
     this.controlElements[direction] = controller;
   }
 
-  getCursorForDirection(
+  private getCursorForDirection(
     direction: SingleDirection | MultipleDirection,
   ): string {
     switch (direction) {
@@ -198,13 +147,13 @@ export class CreateControls {
 
 export class CreateResizes {
   el: HTMLElement | null;
-  startRect: ResizeRect | null;
-  direction?: SingleDirection | MultipleDirection;
+  private startRect: ResizeRect | null;
+  private direction?: SingleDirection | MultipleDirection;
   private controlMap: Map<HTMLElement, SingleDirection | MultipleDirection> =
     new Map();
 
-  userSelect = document.body.style.userSelect;
-  currentDom?: HTMLElement;
+  private userSelect = document.body.style.userSelect;
+  private currentDom?: HTMLElement;
 
   constructor() {
     this.el = null;
@@ -230,7 +179,7 @@ export class CreateResizes {
     controlDom.ontouchstart = ready;
   }
 
-  start(event: MouseEvent | TouchEvent) {
+  private start(event: MouseEvent | TouchEvent) {
     if (!this.currentDom || !this.el) return;
     event.preventDefault();
     this.userSelect = document.body.style.userSelect;
@@ -258,7 +207,7 @@ export class CreateResizes {
     }
   }
 
-  move(event: MouseEvent | TouchEvent) {
+  private move(event: MouseEvent | TouchEvent) {
     if (!this.startRect) return;
     event.preventDefault();
     switch (this.direction) {
@@ -293,7 +242,7 @@ export class CreateResizes {
     }
   }
 
-  moveLeft(event: MouseEvent | TouchEvent) {
+  private moveLeft(event: MouseEvent | TouchEvent) {
     if (!this.el || !this.startRect) return;
 
     const currentX =
@@ -303,7 +252,7 @@ export class CreateResizes {
     this.el.style.width = this.startRect.width + diffX + "px";
   }
 
-  moveRight(event: MouseEvent | TouchEvent) {
+  private moveRight(event: MouseEvent | TouchEvent) {
     if (!this.el || !this.startRect) return;
 
     const currentX =
@@ -313,7 +262,7 @@ export class CreateResizes {
     this.el.style.width = this.startRect.width + diffX + "px";
   }
 
-  moveTop(event: MouseEvent | TouchEvent) {
+  private moveTop(event: MouseEvent | TouchEvent) {
     if (!this.el || !this.startRect) return;
 
     const currentY =
@@ -323,7 +272,7 @@ export class CreateResizes {
     this.el.style.height = this.startRect.height + diffY + "px";
   }
 
-  moveBottom(event: MouseEvent | TouchEvent) {
+  private moveBottom(event: MouseEvent | TouchEvent) {
     if (!this.el || !this.startRect) return;
 
     const currentY =
@@ -333,10 +282,8 @@ export class CreateResizes {
     this.el.style.height = this.startRect.height + diffY + "px";
   }
 
-  end() {
-    console.log("end");
+  private end() {
     document.body.style.userSelect = this.userSelect;
-
     this.startRect = null;
     document.removeEventListener("mousemove", this.move);
     document.removeEventListener("mouseup", this.end);
