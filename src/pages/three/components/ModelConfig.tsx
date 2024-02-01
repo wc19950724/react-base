@@ -1,6 +1,6 @@
 import { Progress } from "antd";
 
-import { Model } from "../type";
+import { Model } from "../store/type";
 
 interface IProps {
   model: Model;

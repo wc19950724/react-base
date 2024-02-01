@@ -1,2 +1,2 @@
 export { modelLoaderStore } from "./modelLoader";
-export { rendererStore } from "./Renderer";
+export { rendererStore } from "./renderer";

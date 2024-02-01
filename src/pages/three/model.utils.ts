@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 import { rendererStore } from "./store";
 
@@ -33,3 +34,9 @@ class ModelRenderer {
 }
 
 export const modelRenderer = new ModelRenderer();
+
+export const loadModel = (gltfs: string[]) => {
+  const loader = new GLTFLoader();
+  const proms = gltfs.map((gltf) => loader.loadAsync(gltf));
+  return Promise.race(proms);
+};
