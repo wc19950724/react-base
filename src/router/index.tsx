@@ -111,6 +111,27 @@ export const routes: RouteMenu[] = [
     ],
   },
   {
+    path: "/echarts",
+    meta: {
+      title: "echarts",
+      icon: <PieChartOutlined />,
+    },
+    children: [
+      {
+        path: "/echarts",
+        element: <Navigate to="/echarts/index" />,
+      },
+      {
+        path: "/echarts/index",
+        Component: lazy(() => import("@/pages/echarts/index")),
+        meta: {
+          title: "echarts-demo",
+          icon: <PieChartOutlined />,
+        },
+      },
+    ],
+  },
+  {
     path: "*",
     Component: lazy(() => import("@/components/NotFound")),
   },
